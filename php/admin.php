@@ -1,0 +1,1298 @@
+<?php 
+
+session_start();
+  error_reporting(E_ALL & ~E_NOTICE); //Hide php notifications on the page
+  
+  /* Prevent Caching */
+  header("Cache-Control: no-store, no-cache, must-revalidate, max-age=0");
+  header("Cache-Control: post-check=0, pre-check=0", false);
+  header("Pragma: no-cache");
+
+  require_once "upload.php";
+  require_once "editres.php";
+  require_once "newreview.php";
+  require_once "addworker.php";
+  require_once "editinvertory.php";
+  require_once "db.php";
+  
+  if (($_SESSION["username"])) 
+  {
+    $db = db::get();
+
+    $routingQuery = "SELECT role_id FROM users WHERE username ='".$_SESSION["username"]."'";
+    $routing = $db->query($routingQuery);
+    foreach($routing as $routmp){$roles=$routmp;}
+    $role = $roles["role_id"];
+    $role = (int)$role;
+
+    switch ($role) {
+        case 1:
+         break;
+
+      case 2:
+        header("location: ../index.php"); //user role
+        break;
+
+      case 3:
+        header("location: worker.php"); //receotionist role
+        break;
+
+      case 4:
+        header("location: worker2.php"); //courier role
+        break;
+
+      case 5:
+        header("location: worker3.php"); //waiter role
+        break;
+      
+      default:
+        header("location: ../index.php"); //in case of wtf
+        break;
+    }
+  }
+  else
+  {
+    header("location: ../index.php");
+  }
+
+  $errors = array();
+  ?>
+  <!DOCTYPE html>
+  <html>
+  <head>
+   <title>Admin Page</title>
+   <meta charset="utf-8">
+   <meta name="viewport" content="width=device-width, initial-scale=1">
+   <link rel="stylesheet" type="text/css" href="../fontawesome/css/all.min.css">
+   <link rel="stylesheet" href="../css/bootstrap.min.css">
+   <link rel="stylesheet" href="../css/main.css">
+   <script src="../js/jquery-1.11.2.min.js"></script>
+   <link rel="stylesheet" type="text/css" href="../css/dragndrop.css">
+   <link rel="shortcut icon" href="../images/favicon.ico" type="image/x-icon"/>
+   <link rel="stylesheet" href="../css/sweetalert2.min.css">
+   <script src="../js/sweetalert2.all.min.js"></script>
+   <script src="../js/wtf.js"></script>
+   <script type="text/javascript">
+    $(window).load(function() {
+      $('.flexslider').flexslider({
+        animation: "slide",
+        controlsContainer: ".flexslider-container"
+      });
+    });
+  </script>
+  <style>
+  .bg 
+  { 
+   background-image: url("../images/bg.jpg");
+   background-repeat: no-repeat;
+   background-size: cover;
+ }
+ .registry
+ {
+  background-color: rgba(255,255,255,.74);
+  border-color: rgba(255,255,255,0.3);
+  height: 30px;
+}
+
+::-webkit-scrollbar {
+  width: 10px;
+}
+
+::-webkit-scrollbar-track {
+  background: #ddd;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #666;
+}
+
+input::placeholder {
+  color: rgba(66,58,58,1)!important;
+}
+textarea::placeholder {
+  color: rgba(66,58,58,1)!important;
+}
+iframe
+{
+  overflow: hidden;
+}
+
+.ui-select
+{
+  width: 100%
+}
+select::-ms-expand 
+{  
+  display: none; 
+}
+
+select
+{
+  -webkit-appearance: none;
+  appearance: none;
+}
+
+</style>
+</head>
+<body class="bg info" data-spy="scroll" data-target="#template-navbar">
+	<nav id="template-navbar" class="navbar navbar-default custom-navbar-default navbar-fixed-top">
+    <div class="container">
+      <div class="navbar-header">
+        <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#Food-fair-toggle">
+          <span class="sr-only">Toggle navigation</span>
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+        </button>
+        <a class="navbar-brand" href="#">
+          <img id="logo" src="../images/Logo_main.png" class="logo img-responsive">
+        </a>
+      </div>
+
+      <div class="collapse navbar-collapse" id="Food-fair-toggle">
+        <ul class="nav navbar-nav navbar-right">
+          <li><a href="../index.php"><i class="fal fa-chevron-left"></i> Main Page</a></li>
+          <li><a href="#"><i class="fal fa-shopping-cart"></i> Orders</a></li>
+          <li><a href="#" id="manageWorker"><i class="fal fa-users"></i> Workers</a></li>
+          <li><a href="#" id="modifyRes"><i class="fal fa-calendar-alt"></i> Reservations</a></li>
+          <li><a href="#" id="modifyInv"><i class="fal fa-warehouse"></i> Invertory</a></li>
+          <li><a href="#" id="revContacts" onclick="refreshContacts()"><i class="fal fa-comments"></i> Contacts</a></li>
+          <li>
+            <ul class="dropdownmenu">
+              <li class="button-dropdown">
+                <a href="javascript:void(0)" class="dropdown-toggle" style="background-color: #8bc34a;">
+                  <i class="fal fa-plus-square"></i> Add <span>▼</span>
+                </a>
+                <ul class="dropdown-menu">
+                  <li><a href="#" id="addfbutton"><i class="fal fa-utensils"></i> new Food </a></li>
+                  <li><a href="#" id="newWorker"><i class="fal fa-user-plus"></i> new Worker </a></li>
+                  <li><a href="#" id="newReview"><i class="fal fa-file-edit"></i> Review </a></li>
+                </ul>
+              </li>
+            </ul>
+          </li>
+          <li><a href="logout.php" title="Log Out"><i class="fal fa-sign-out-alt"></i></a></li>
+        </ul>
+      </div><!-- /.navbar-collapse -->
+    </div><!-- /.row -->
+  </nav>
+
+  <div class="info container" style="margin-top: 5%;background-color: rgba(239,239,239, .09);">
+   <div class="jumbotron text-center" style="background-color: rgba(255,255,255,.5);">
+    <h2>Admin Page</h2>
+    <small>Welcome back!</small>
+    <?php if(count($errors) > 0): ?><small color="red"><?php foreach($errors as $error){echo $error."<br>";} endif; ?></small>
+  </div>
+  <div id="addfeaturedForm">
+   <form method="POST" action="upload.php" enctype="multipart/form-data">
+    <div class="form-row">
+      <div class="col">
+        <input type="text" class="form-control registry" placeholder="Food Name" name="name" onfocus="this.style.color='rgba(66,58,58,1)'">
+        <input type="text" class="form-control registry" placeholder="Price" name="price" onfocus="this.style.color='rgba(66,58,58,1)'">
+        <select name="type" id="" class="form-control registry">
+          <option value="starter">Starter</option>
+          <option value="maincourse">Main Course</option>
+          <option value="dessert">Dessert</option>
+        </select>
+        <select name="attr" class="form-control registry">
+          <option value="normal">Normal meal</option>
+          <option value="special">Special diet available</option>
+        </select>
+        <select name="class" class="form-control registry">
+          <option value="restaurant">Restaurant meal</option>
+          <option value="webshop">Webshop item</option>
+        </select>
+        <textarea class="registry form-control" rows="3" placeholder="Description for the food" name="food_desc" onfocus="this.style.color='rgba(66,58,58,1)';this."></textarea>
+        <input type="button" class="btn btn-primary form-control" data-toggle="modal" data-target="#exampleModal" style="background-color: rgba(51,122,183, .49)" value="Add Nutrients Table">
+        <input type="submit" class="btn btn-success form-control" style="color: white;" value="Upload new dish" name="submit" onfocus="this.style.color='white'">
+        <p>
+          <label for="myDragElement" class="dragAndUpload" data-post-string="?todo=test">
+            <span class="dragAndUploadIcon">
+              <i class="dragAndUploadIconNeutral fas fa-arrow-up"></i>
+              <i class="dragAndUploadIconUploading fas fa-cog fa-spin"></i>
+              <i class="dragAndUploadIconSuccess fas fa-thumbs-up"></i>
+              <i class="dragAndUploadIconFailure fas fa-thumbs-down"></i>
+            </span>
+            <b class="dragAndUploadText"><span class="dragAndUploadTextLarge">Upload Picture</span> <span class="dragAndUploadTextSmall">with a click here</span></b>
+            <i class="dragAndUploadCounter">0%</i>
+            <input type="file" multiple="multiple" class="dragAndUploadManual" name="fileToUpload" id="myDragElement" />
+          </label>
+        </p>
+      </div>
+    </div>
+    <!-- MODAL -->
+
+<div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalLabel">Add Nutrients<button type="button" class="close" data-dismiss="modal" aria-label="Close"><i class="far fa-times-circle"></i></button></h5>
+        
+      </div>
+      <div class="modal-body">
+        
+        <div class="form-group">
+          <label for="recipient-name" class="col-form-label">Protein:</label>
+          <input type="text" class="form-control" id="recipient-name" name="protein" value="<?php if(!(empty($protein))){echo $protein;} ?>">
+        </div>
+        <div class="form-group">
+          <label for="recipient-name" class="col-form-label">Carbohydrates:</label>
+          <input type="text" class="form-control" id="recipient-name" name="carb" value="<?php if(!(empty($carb))){echo $carb;} ?>">
+        </div>
+        <div class="form-group">
+          <label for="recipient-name" class="col-form-label">Sodium:</label>
+          <input type="text" class="form-control" id="recipient-name" name="sodium" value="<?php if(!(empty($sodium))){echo $sodium;} ?>">
+        </div>
+        <div class="form-group">
+          <label for="recipient-name" class="col-form-label">Fiber:</label>
+          <input type="text" class="form-control" id="recipient-name" name="fiber" value="<?php if(!(empty($fiber))){echo $fiber;} ?>">
+        </div>
+        <div class="form-group">
+          <label for="recipient-name" class="col-form-label">Fat:</label>
+          <input type="text" class="form-control" id="recipient-name" name="fat" value="<?php if(!(empty($fat))){echo $fat;} ?>">
+        </div>
+        <div class="form-group">
+          <label for="recipient-name" class="col-form-label">Saturated Fat:</label>
+          <input type="text" class="form-control" id="recipient-name" name="sat_fat" value="<?php if(!(empty($sat_fat))){echo $sat_fat;} ?>">
+        </div>
+        <div class="form-group">
+          <label for="recipient-name" class="col-form-label">Sugar:</label>
+          <input type="text" class="form-control" id="recipient-name" name="sugar" value="<?php if(!(empty($sugar))){echo $sugar;} ?>">
+        </div>
+        <div class="form-group">
+          <label for="recipient-name" class="col-form-label">Cholesterol:</label>
+          <input type="text" class="form-control" id="recipient-name" name="cholesterol" value="<?php if(!(empty($cholesterol))){echo $cholesterol;} ?>">
+        </div>
+        
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+        <small>Data will be saved automatically.</small>
+      </div>
+    </div>
+  </div>
+</div>
+</form>
+  </div>
+
+<div id="invertoryPanel">
+  <?php $selectAllItem = "SELECT * FROM wrappers"; $allitem = $db->getArray($selectAllItem); ?>
+  <?php if(count($allitem) == 0): ?>
+    <div class="text-center" data-toggle="modal" data-target="#exampleModal" style="background-color: rgba(255,255,255,.5); border-radius: 15px;"><h3> No Items on list. <br> <i class="fal fa-plus-circle"></i> New Item</h3></div>
+  <?php endif; ?>
+  <?php if(count($allitem) > 0): ?>
+
+    <table class="table" style="background-color: rgba(255,255,255,.5);">
+      <thead>
+        <tr><!-- -->
+          <th><input style="border-radius: 10px; background-color: rgba(255,255,255, .5); border:none; width: 100%;" id="searchInv" type="text" placeholder=" Search.."></th>
+          <th>Wrapper</th>
+          <th>Quantity</th>
+          <th>Edited at</th>
+          <th><button  id="newitemInv" class="btn btn-sm btn-primary"><i class="fal fa-plus-circle"></i> New Item</button> </th>
+        </tr>
+      </thead>
+      <tbody id="invTable">
+        <?php foreach($allitem as $item): ?>
+          <tr>
+            <td><button data-toggle="modal" data-target="#inv-modal" data-id="<?php echo $item["id"]; ?>" id="getInv" class="btn btn-sm btn-success"><i class="fas fa-edit"></i>Edit</button></td>
+            <th scope="row"><?php echo $item["wrappername"]; ?></th>
+            <td><?php echo $item["quantity"]; ?></td>
+            <td><?php echo $item["last_update_by"]; ?></td>
+            <td><button class="btn btn-sm btn-danger" name="deleteItem" onclick="window.location.href='deleteitem.php?item=<?php echo $item['id']; ?>'"><i class="fas fa-trash"></i> Delete</button></td>
+          </tr>
+        <?php endforeach; ?>
+      </tbody>
+    </table>
+
+  <?php endif; ?>
+
+  
+  <form id="newITemPanel" method="POST" action="insertItem.php">
+    <div class="form-group">
+      <label for="invWrapperName" style="color: black;">Wrapper Name</label>
+      <input type="text" class="form-control registry" id="invWrapperName" name="wrname" required="true">
+    </div>
+    <div class="form-group">
+      <label for="InvItemQuantity" style="color: black;">Quantity</label>
+      <input type="number" class="form-control registry" name="wrquantity" id="InvItemQuantity" required="true">
+    </div>
+    <button class="btn btn-primary" name="addInvItem"><i class="fas fa-plus"></i> Add item</button>
+  </form>
+  
+
+</div>
+
+<div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalLabel">New message</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <form>
+          <div class="form-group">
+            <label for="recipient-name" class="col-form-label">Recipient:</label>
+            <input type="text" class="form-control" id="recipient-name">
+          </div>
+          <div class="form-group">
+            <label for="message-text" class="col-form-label">Message:</label>
+            <textarea class="form-control" id="message-text"></textarea>
+          </div>
+        </form>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+        <button type="button" class="btn btn-primary">Send message</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div id="contactMenu" class="container text-center">
+  <iframe width="100%" height="600vh" id="contactPanel" src="iframe/contacts.php" frameborder="0" allowtransparency="true" scrolling="no"></iframe>
+</div>
+
+<?php 
+  $selectReservations = "SELECT * FROM reservations";
+  $allreservations = $db->getArray($selectReservations);
+?>
+
+<div id="modifyReserve" id="reserveList">
+  <?php if(count($allreservations) == 0): ?>
+    <div class="container text-center" style="background-color: rgba(255,255,255,.5);"><h3> No Reservations Yet. </h3></div>
+  <?php endif; ?>
+  <?php if(count($allreservations) > 0): ?>
+
+    <table class="table" style="background-color: rgba(255,255,255,.5);">
+      <thead>
+        <tr>
+          <th scope="col">Reservation ID:</th>
+          <th scope="col">Ordered At</th>
+          <th scope="col">Status</th>
+          <th scope="col">Reserved By</th>
+          <th scope="col">Review</th>
+        </tr>
+      </thead>
+      <tbody>
+        <?php foreach($allreservations as $reservations): ?>
+          <tr>
+            <th scope="row"><?php echo $reservations["id"]; ?></th>
+            <td><?php echo $reservations["bookedat"]; ?></td>
+            <td><?php echo $reservations["progress"]; ?></td>
+            <td><?php echo $reservations["forWho"]; ?></td>
+            <td><button data-toggle="modal" data-target="#res-modal" data-id="<?php echo $reservations["id"]; ?>" id="getEmployee" onclick="reload()" class="btn btn-sm btn-success"><i class="fas fa-edit"></i>Edit</button></td>
+          </tr>
+        <?php endforeach; ?>
+      </tbody>
+    </table>
+
+  <?php endif; ?>
+
+</div> <!-- End reserve container -->
+
+
+<?php 
+
+$selectReviews = "SELECT * FROM reviews";
+$allReviews = $db->getArray($selectReviews);
+?>
+
+<div id="reviewsPanel" id="reserveList">
+  <?php if(count($allReviews) == 0): ?>
+    <div class="container text-center" style="background-color: rgba(255,255,255,.5);"><h3> No Reviews Yet. </h3></div>
+  <?php endif; ?>
+  <?php if(count($allReviews) > 0): ?>
+    <div class="container">
+      <table class="table" style="background-color: rgba(255,255,255,.5); width: 97%;">
+        <thead>
+          <tr>
+            <th scope="col">Review ID</th>
+            <th scope="col">Title</th>
+            <th scope="col">Author</th>
+            <th scope="col">Portfolio site</th>
+            <th scope="col">Cover picture url</th>
+            <th scope="col" id="togglerev"><div id="hideRev"><i class="fal fa-eye-slash"></i> Hide</div><div id="showrev"><i class="fal fa-eye"></i> Show</div></th>
+          </tr>
+        </thead>
+        <tbody class="revitem">
+          <?php foreach($allReviews as $review): ?>
+            <th scope="row"><?php echo $review["id"]; ?></th>
+            <td><?php echo $review["title"]; ?></td>
+            <td><?php echo $review["author"]; ?></td>
+            <td><?php echo substr($review["website"], 0,29); if(strlen($review["website"])>29){echo "...";} ?></td>
+            <td><?php echo substr($review["url"], 0,29); if(strlen($review["url"])>29){echo "...";} ?></td>
+            <td>
+              <button data-toggle="modal" data-target="#rev-modal" data-id="<?php echo $review["id"]; ?>" id="getReview" class="btn btn-sm btn-success">
+                <i class="fal fa-book-open"></i> Read</button>
+                <button class="btn btn-sm btn-danger" name="deleteReview" onclick="window.location.href='deletereview.php?delete=<?php echo $review['id']; ?>'"><i class="fal fa-eraser"></i> Remove</button>
+              </td>
+            </tr>
+
+          <?php endforeach; ?>
+        </tbody>
+      </table>
+    </div>
+  <?php endif; ?>
+
+  <form method="POST" action="upload.php">
+    <div class="form-group row">
+      <label for="revtitle" class="col-sm-2 col-form-label">Title</label>
+      <div class="col-sm-10">
+        <input type="text" class="form-control registry" id="revtitle" name="revtitle" required>
+      </div>
+    </div>
+    <div class="form-group row">
+      <label for="revauthor" class="col-sm-2 col-form-label">Author</label>
+      <div class="col-sm-10">
+        <input type="text" class="form-control registry" id="revauthor" name="revauthor" required>
+      </div>
+    </div>
+    <div class="form-group row">
+      <label for="revwebsite" class="col-sm-2 col-form-label">Website</label>
+      <div class="col-sm-10">
+        <input type="text" class="form-control registry" id="revwebsite" name="revwebsite" required>
+      </div>
+    </div>
+    <div class="form-group row">
+      <label for="revurl" class="col-sm-2 col-form-label">URL for Cover Picture</label>
+      <div class="col-sm-10">
+        <input type="text" class="form-control registry" id="revurl" name="revurl" required>
+      </div>
+    </div>
+    <div class="form-group row">
+      <label for="revmessage" class="col-sm-2 col-form-label">Review's Content</label>
+      <div class="col-sm-10">
+        <textarea class="form-control registry" name="revmessage" id="revmessage" rows="5" required></textarea>
+      </div>
+    </div>
+    <button type="submit" class="btn btn-success" name="addrev">Add Review</button>
+  </form>
+</div> 
+
+<?php 
+  $selectRolesQuery = "SELECT * FROM roles"; 
+  $allrole = $db->getArray($selectRolesQuery);
+?>
+
+<div id="newWorkerPanel">
+  <form action="addworker.php" method="POST">
+    <div class="form-group">
+      <label for="exampleFormControlInput1" style="color: white;">Worker's username:</label>
+      <input type="text" name="username" class="form-control registry" id="exampleFormControlInput1" placeholder="Ought to be person specific" required>
+    </div>
+    <div class="form-group">
+      <label for="exampleFormControlSelect1" style="color: white;">Profession</label>
+      <select name="selectrole" id="selectrole" class="exampleFormControlSelect1 form-control registry">
+        <option value="">Select Rule</option>
+        <?php if(count($allrole) > 0): ?>
+          <?php foreach($allrole as $role): ?>
+            <?php if($role["role"] != "admin"): ?>
+              <option value="<?php echo $role['id']; ?>" title="<?php echo $role['description']; ?>"><?php echo $role["role"]; ?></option>
+            <?php endif; ?>
+          <?php endforeach; ?>
+        <?php endif; ?>
+      </select>
+    </div>
+    <div class="form-group">
+      <label for="exampleFormControlInput1" style="color: white;">Email Address:</label>
+      <input type="email" name="email" class="form-control registry" id="exampleFormControlInput1" required>
+    </div>
+    <div class="form-group">
+      <label for="exampleFormControlInput1" style="color: white;">Full Name:</label>
+      <input type="text" name="fullNameInput" class="form-control registry" id="exampleFormControlInput2" required>
+    </div>
+    <div class="form-group">
+      <label for="exampleFormControlInput1" style="color: white;">Phone Number:</label>
+      <input type="tel" name="phone" class="form-control registry" id="exampleFormControlInput3" required>
+    </div>
+    <button class="btn btn-success" name="addworker" id="addworker"><i class="fal fa-user-plus"></i> Add Worker</button>
+    <br>
+  </form>
+</div>
+
+<?php 
+  $selectWorkersByRoleQuery = "SELECT users.id, users.role_id, roles.role, users.username FROM users INNER JOIN roles ON users.role_id = roles.id WHERE users.role_id = 3 OR users.role_id = 4 OR users.role_id = 5 ORDER BY users.id ASC";
+  $allWorker = $db->getArray($selectWorkersByRoleQuery);
+ ?>
+<div id="manageWorkerPanel">
+  <?php if(count($allWorker) == 0): ?>
+    <div class="container text-center" style="background-color: rgba(255,255,255,.5);"><h3> No Workers Yet. </h3></div>
+  <?php endif; ?>
+  <?php if(count($allWorker) > 0): ?>
+
+    <table class="table" align="center" style="background-color: rgba(255,255,255,.5); width: 95%;">
+      <thead>
+        <tr>
+          <th scope="col">Worker's ID:</th>
+          <th scope="col">Username</th>
+          <th scope="col">Job</th>
+          <th scope="col">Permission Code(s)</th>
+          <th scope="col">Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        <?php foreach($allWorker as $worker): ?>
+          <tr>
+            <th scope="row"><?php echo $worker["id"]; ?></th>
+            <td><?php echo $worker["username"]; ?></td>
+            <td><?php echo $worker["role"]; ?></td>
+            <td><?php echo $worker["role_id"]; ?></td>
+            <td>
+              <button data-toggle="modal" data-target="#worker-modal" data-id="<?php echo $worker["id"]; ?>" id="getWorker" onclick="reload()" class="btn btn-sm btn-warning"><i class="fas fa-edit"></i>Edit</button>
+              <a href="delete.php?workerid=<?php echo $worker['id']; ?>" class="btn btn-sm btn-danger" title="Remove Worker"><i class="fal fa-user-minus"> Remove</i></a>
+              <a href="resetworkerpw.php?worker=<?php echo $worker['username']; ?>" class="btn btn-sm btn-light" title="Reset Password"><i class="fas fa-sync-alt"></i></a>
+            </td>
+          </tr>
+        <?php endforeach; ?>
+      </tbody>
+    </table>
+
+  <?php endif; ?>
+
+</div>
+
+<!-- Worker Modal -->
+
+<div id="worker-modal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true" style="display: none;">
+  <form action="editworker.php" method="POST">
+   <div class="modal-dialog"> 
+    <div class="modal-content">                  
+     <div class="modal-header"> 
+       <button type="button" class="close" data-dismiss="modal" aria-hidden="true"><i class="far fa-times-circle"></i></button> 
+       <h4 class="modal-title">
+         Worker Details
+       </h4> 
+     </div>          
+     <div class="modal-body">                   
+       <div id="worker-detail">                                        
+         <div class="row"> 
+           <div class="col-md-12">                         
+             <div class="table-responsive">        
+               <form action="" method="POST" id="insert_form">                     
+                 <table class="table table-striped table-bordered">
+                   <tr>
+                     <th>User's ID:</th>
+                     <td><input type="text" name="workid" id="workid" readonly="true" style="border: none; text-decoration: none; background-color: transparent;"></td>
+                   </tr> 
+                   <tr>
+                     <th>Username:</th>
+                     <td><input name="workerusername" type="text" value="" id="workerusername" name="workerusername"></td>
+                   </tr>                                                                                 
+                    <tr>
+                      <th>Active Role:</th>
+                     <td>
+                       <select name="selectrole" id="workroles">
+                         <?php foreach($allrole as $role): ?>
+                            <?php if($role["role"] != "admin"): ?>
+                              <option value="<?php echo $role['id']; ?>"><?php echo $role["role"]; ?></option>
+                            <?php endif; ?>
+                         <?php endforeach; ?>
+                       </select>
+                     </td>
+                   </tr> 
+                   <tr>
+                     <th>Permission Code(s): </th>
+                     <td><input id="role_id" value="" readonly="true" style="border: none; text-decoration: none;"></td>
+                    </tr>
+                 </table>
+               </form>                                
+             </div>                                       
+           </div> 
+         </div>                       
+       </div>                              
+     </div>           
+     <div class="modal-footer"> 
+      <button type="button" class="btn btn-danger" data-dismiss="modal">Close</button> 
+      <button id="insert" class="btn btn-success" onclick="return validateWorkerModal()">Update</button>
+    </div>              
+  </div> 
+</div>
+</form>
+</div>
+
+<!-- Invertory Modal -->
+
+<div id="inv-modal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true" style="display: none;">
+  <form action="" method="POST">
+   <div class="modal-dialog"> 
+    <div class="modal-content">                  
+     <div class="modal-header"> 
+       <button type="button" class="close" data-dismiss="modal" aria-hidden="true"><i class="far fa-times-circle"></i></button> 
+       <h4 class="modal-title">
+         Wrapper Details
+       </h4> 
+     </div>          
+     <div class="modal-body">                   
+       <div id="employee-detail">                                        
+         <div class="row"> 
+           <div class="col-md-12">                         
+             <div class="table-responsive">        
+               <form action="" method="POST" id="insert_form">                     
+                 <table class="table table-striped table-bordered">
+                   <tr>
+                     <th>Wrapper id</th>
+                     <td><input type="text" id="wrapperid" value="" name="wrapperid" readonly="true" style="border: none; text-decoration: none; background:transparent;"></td>
+                   </tr> 
+                   <tr>
+                     <th>Wrapper name</th>
+                     <td><input type="text" id="wrapper_name" value="" name="wrapper_name"></td>
+                   </tr> 
+                   <tr>
+                     <th>Updated By:</th>
+                     <td><input type="text" id="Inv_updated_by" readonly="true" style="border:none; text-decoration: none; background: transparent;"></td>
+                   </tr>                                     
+                   <tr>
+                     <th>Quantity</th>
+                     <td><input type="number" value="" id="wrapper_quantity" name="wrapper_quantity"></td>
+                   </tr>
+                 </table>
+               </form>                                
+             </div>                                       
+           </div> 
+         </div>                       
+       </div>                              
+     </div>           
+     <div class="modal-footer"> 
+      <button type="button" class="btn btn-danger" data-dismiss="modal">Close</button> 
+      <button id="insert" class="btn btn-success" name="updateINvItem" onclick="return invModal()">Update</button>
+    </div>              
+  </div> 
+</div>
+</form>
+</div>
+
+
+<!-- Modal 2 -->
+
+<div id="res-modal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true" style="display: none;">
+  <form action="admin.php" method="POST">
+   <div class="modal-dialog"> 
+    <div class="modal-content">                  
+     <div class="modal-header"> 
+       <button type="button" class="close" data-dismiss="modal" aria-hidden="true"><i class="far fa-times-circle"></i></button> 
+       <h4 class="modal-title">
+         Reservation Details
+       </h4> 
+     </div>          
+     <div class="modal-body">                   
+       <div id="employee-detail">                                        
+         <div class="row"> 
+           <div class="col-md-12">                         
+             <div class="table-responsive">        
+               <form action="" method="POST" id="insert_form">                     
+                 <table class="table table-striped table-bordered">
+                   <tr>
+                     <th>Reservation ID</th>
+                     <td id="resid"></td>
+                   </tr> 
+                   <tr>
+                     <th>Reserved By:</th>
+                     <td id=""><iframe src="iframe/userid.php" frameborder="0" id="reservedby" height="25px" scrolling="no"></iframe></td>
+                   </tr>                                     
+                   <tr>
+                     <th>For Who</th>
+                     <td><input type="text" value="" id="forwho" name="forwho"></td>
+                   </tr>                                         
+                   <tr>
+                     <th>Booked At:</th>
+                     <td id=""><input type="date" value="" id="bookedat" name="bookedat" readonly="true"></td>
+                   </tr>   
+                   <tr>
+                     <th>Reserved To:</th>
+                     <td id=""><input type="date" value="" id="reservedate" name="reservedate"></td>
+                   </tr>                                         
+                   <tr>
+                     <th>People Number</th>
+                     <td id=""><input type="number" id="pepoleNo" value="" name="pepoleNo"></td>
+                   </tr> 
+                   <tr>
+                     <th>Message:</th>
+                     <td id=""><textarea name="message" id="message" rows="3"></textarea></td>
+                   </tr>                                             
+                   <tr>
+                     <th>Progress</th>
+                     <td id=""><input type="text" value="" id="progress" name="progress"></td>
+                   </tr> 
+
+                 </table>
+               </form>                                
+             </div>                                       
+           </div> 
+         </div>                       
+       </div>                              
+     </div>           
+     <div class="modal-footer"> 
+      <button type="button" class="btn btn-danger" data-dismiss="modal">Close</button> 
+      <button id="insert" class="btn btn-success" onclick="return validateModal()">Update</button>
+    </div>              
+  </div> 
+</div>
+</form>
+</div>
+
+<!-- Review Modal -->
+<div id="rev-modal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true" style="display: none;">
+  <form action="" method="POST">
+    <div class="modal-dialog"> 
+      <div class="modal-content">                  
+        <div class="modal-header"> 
+          <button type="button" class="close" data-dismiss="modal" aria-hidden="true"><i class="far fa-times-circle"></i></button> 
+          <h4 class="modal-title">
+            Details
+          </h4> 
+        </div>          
+        <div class="modal-body">                   
+          <div id="review-detail">                                        
+            <div class="row"> 
+              <div class="col-md-12">                         
+                <div class="table-responsive">                             
+                  <table class="table table-striped table-bordered">
+                    <tr>
+                      <th>Review ID:</th>
+                      <td id="revid"></td>
+                    </tr>                                     
+                    <tr>
+                      <th>Author's Name:</th>
+                      <td id="author2"></td>
+                    </tr>                                         
+                    <tr>
+                      <th>Title</th>
+                      <td id="title2"></td>
+                    </tr>   
+                    <tr>
+                      <th>Website:</th>
+                      <td id="website2"></td>
+                    </tr>                                         
+                    <tr>
+                      <th>Message:</th>
+                      <td id="message2"></td>
+                    </tr> 
+                    <tr>
+                      <th>URL:</th>
+                      <td id="url2"></td>
+                    </tr>                                             
+                  </table>                                
+                </div>                                       
+              </div> 
+            </div>                       
+          </div>                              
+        </div>           
+        <div class="modal-footer"> 
+          <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button> 
+          <!--<button class="btn btn-success" data-dismiss="modal">Reply</button> -->
+        </div>              
+      </div> 
+    </div>
+  </form>
+</div>
+
+<script src="../js/bootstrap.min.js"></script>
+<script src="../js/owl.carousel.min.js"></script>
+<script type="text/javascript" src="../js/jquery.mixitup.min.js" ></script>
+<script src="../js/wow.min.js"></script>
+<script src="../js/jquery.validate.js"></script>
+<script type="text/javascript" src="../js/jquery.hoverdir.js"></script>
+<script type="text/javascript" src="../js/jQuery.scrollSpeed.js"></script>
+<script src="../js/script.js"></script>
+<script>
+  function reload()
+  {
+    document.getElementById('reservedby').contentWindow.location.reload();
+  }
+
+  function refreshContacts()
+  {
+    document.getElementById('contactPanel').contentWindow.location.reload();
+  }
+
+  $(document).ready(function(){
+  $("#searchInv").on("keyup", function() {
+    var value = $(this).val().toLowerCase();
+    $("#invTable tr").filter(function() {
+      $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1)
+    });
+  });
+});
+  
+  $("#addfeaturedForm").hide();
+  $("#invertoryPanel").hide();
+  $("#modifyReserve").hide();
+  $("#contactMenu").hide();
+  $("#newWorkerPanel").hide();
+  $("#reviewsPanel").hide();
+  $("#manageWorkerPanel").hide();
+  $("#showrev").hide();
+  $("#newITemPanel").hide();
+
+  $("#addfbutton").click(function(e) {
+    e.preventDefault();
+    $("#addfeaturedForm").toggle();
+
+    if($("#contactMenu").is(":visible")){
+      $("#contactMenu").hide();
+    }
+
+    if($("#invertoryPanel").is(":visible")){
+      $("#invertoryPanel").hide();
+    }
+
+    if($("#manageWorkerPanel").is(":visible")){
+      $("#manageWorkerPanel").hide();
+    }
+
+    if($("#modifyReserve").is(":visible")){
+      $("#modifyReserve").hide();
+    }
+
+    if($("#newWorkerPanel").is(":visible")){
+      $("#newWorkerPanel").hide();
+    }
+
+    if($("#reviewsPanel").is(":visible")){
+      $("#reviewsPanel").hide();
+    }
+  });
+
+  $("#newReview").click(function(e) {
+    e.preventDefault();
+    $("#reviewsPanel").toggle();
+
+    if($("#contactMenu").is(":visible")){
+      $("#contactMenu").hide();
+    }
+
+    if($("#manageWorkerPanel").is(":visible")){
+      $("#manageWorkerPanel").hide();
+    }
+
+    if($("#modifyReserve").is(":visible")){
+      $("#modifyReserve").hide();
+    }
+
+    if($("#newWorkerPanel").is(":visible")){
+      $("#newWorkerPanel").hide();
+    }
+
+    if($("#addfeaturedFormdd").is(":visible")){
+      $("#addfeaturedForm").hide();
+    }
+
+    if($("#invertoryPanel").is(":visible")){
+      $("#invertoryPanel").hide();
+    }
+
+  });
+
+  $("#togglerev").click(function(e) {
+    e.preventDefault();
+    $("#hideRev").toggle();
+    $("#showrev").toggle();
+
+    $(".revitem").toggle("slow");
+
+  });
+
+  $("#newWorker").click(function(e) {
+    e.preventDefault();
+    $("#newWorkerPanel").toggle();
+
+    if($("#contactMenu").is(":visible")){
+      $("#contactMenu").hide();
+    }
+
+    if($("#manageWorkerPanel").is(":visible")){
+      $("#manageWorkerPanel").hide();
+    }
+
+    if($("#modifyReserve").is(":visible")){
+      $("#modifyReserve").hide();
+    }
+
+    if($("#addfeaturedForm").is(":visible")){
+      $("#addfeaturedForm").hide();
+    }
+
+    if($("#reviewsPanel").is(":visible")){
+      $("#reviewsPanel").hide();
+    }
+
+    if($("#invertoryPanel").is(":visible")){
+      $("#invertoryPanel").hide();
+    }
+
+  });
+
+  $("#revContacts").click(function(e) {
+    e.preventDefault();
+    $("#contactMenu").toggle();
+
+    if($("#modifyReserve").is(":visible")){
+      $("#modifyReserve").hide();
+    }
+
+    if($("#manageWorkerPanel").is(":visible")){
+      $("#manageWorkerPanel").hide();
+    }
+
+    if($("#addfeaturedForm").is(":visible")){
+      $("#addfeaturedForm").hide();
+    }
+
+    if($("#newWorkerPanel").is(":visible")){
+      $("#newWorkerPanel").hide();
+    }
+
+    if($("#reviewsPanel").is(":visible")){
+      $("#reviewsPanel").hide();
+    }
+
+    if($("#invertoryPanel").is(":visible")){
+      $("#invertoryPanel").hide();
+    }
+
+  });
+
+$("#modifyInv").click(function(e) {
+    e.preventDefault();
+    $("#invertoryPanel").toggle();
+
+    if($("#modifyReserve").is(":visible")){
+      $("#modifyReserve").hide();
+    }
+
+    if($("#manageWorkerPanel").is(":visible")){
+      $("#manageWorkerPanel").hide();
+    }
+
+    if($("#addfeaturedForm").is(":visible")){
+      $("#addfeaturedForm").hide();
+    }
+
+    if($("#newWorkerPanel").is(":visible")){
+      $("#newWorkerPanel").hide();
+    }
+
+    if($("#reviewsPanel").is(":visible")){
+      $("#reviewsPanel").hide();
+    }
+
+    if($("#contactMenu").is(":visible")){
+      $("#contactMenu").hide();
+    }
+
+  });
+
+  $("#manageWorker").click(function(e) {
+    e.preventDefault();
+    $("#manageWorkerPanel").toggle();
+
+    if($("#contactMenu").is(":visible")){
+      $("#contactMenu").hide();
+    }
+    if($("#addfeaturedForm").is(":visible")){
+      $("#addfeaturedForm").hide();
+    }
+
+    if($("#modifyReserve").is(":visible")){
+      $("#modifyReserve").hide();
+    }
+
+    if($("#newWorkerPanel").is(":visible")){
+      $("#newWorkerPanel").hide();
+    }
+
+    if($("#reviewsPanel").is(":visible")){
+      $("#reviewsPanel").hide();
+    }
+
+    if($("#invertoryPanel").is(":visible")){
+      $("#invertoryPanel").hide();
+    }
+
+  });
+  
+  $("#modifyRes").click(function(e) {
+    e.preventDefault();
+    $("#modifyReserve").toggle();
+
+    if($("#contactMenu").is(":visible")){
+      $("#contactMenu").hide();
+    }
+    if($("#addfeaturedForm").is(":visible")){
+      $("#addfeaturedForm").hide();
+    }
+
+    if($("#manageWorkerPanel").is(":visible")){
+      $("#manageWorkerPanel").hide();
+    }
+
+    if($("#newWorkerPanel").is(":visible")){
+      $("#newWorkerPanel").hide();
+    }
+
+    if($("#reviewsPanel").is(":visible")){
+      $("#reviewsPanel").hide();
+    }
+
+    if($("#invertoryPanel").is(":visible")){
+      $("#invertoryPanel").hide();
+    }
+  });
+
+  $(document).ready(function(){   
+   $(document).on('click', '#getEmployee', function(e){  
+     e.preventDefault();  
+     var empid = $(this).data('id');    
+     $('#employee-detail').hide();  
+     $.ajax({
+      url: 'review.php',
+      type: 'POST',
+      data: 'empid='+empid,
+      dataType: 'json',
+      cache: false
+    })
+     .done(function(data){
+      $('#employee-detail').hide();
+      $('#employee-detail').show();
+      $('#resid').html(data.id);
+      $('#forwho').val(data.forWho);
+      $('#progress').val(data.progress);
+      $('#bookedat').val(data.bookedat);      
+      $('#reservedate').val(data.reserve_date);      
+      $('#pepoleNo').val(data.pepoleNo);      
+      $('#message').val(data.message);
+      
+      document.cookie = "userid="+data.user_id;
+      document.cookie = "id="+data.id;
+      document.getElementById('reservedby').contentWindow.location.reload();
+
+    })
+     .fail(function(){
+      $('#employee-detail').html('Error, Please try again...');
+    });
+   }); 
+ });
+
+  $(document).ready(function(){   
+   $(document).on('click', '#getWorker', function(e){  
+     e.preventDefault();  
+     var workid = $(this).data('id');    
+     $('#worker-detail').hide();  
+     $.ajax({
+      url: 'revieworker.php',
+      type: 'POST',
+      data: 'workid='+workid,
+      dataType: 'json',
+      cache: false
+    })
+     .done(function(data){
+      $('#worker-detail').hide();
+      $('#worker-detail').show();
+      $('#workid').val(data.id);
+      $('#workerusername').val(data.username);
+      $('#workerole').html(data.role);
+      $('#role_id').val(data.role_id);     
+
+    })
+     .fail(function(){
+      $('#worker-detail').html('Error, Please try again...');
+    });
+   }); 
+ });
+
+  $(document).ready(function(){   
+   $(document).on('click', '#getInv', function(e){  
+     e.preventDefault();  
+     var invid = $(this).data('id');    
+     $('#invertory-detail').hide();  
+     $.ajax({
+      url: 'reviewinvertory.php',
+      type: 'POST',
+      data: 'invid='+invid,
+      dataType: 'json',
+      cache: false
+    })
+     .done(function(data){
+      $('#invertory-detail').hide();
+      $('#invertory-detail').show();
+      $('#wrapperid').val(data.id);
+      $('#wrapper_name').val(data.wrappername);
+      $('#Inv_updated_by').val(data.last_update_by);
+      $('#wrapper_quantity').val(data.quantity);
+      
+      document.cookie = "invid="+data.id;
+
+    })
+     .fail(function(){
+      $('#invertory-detail').html('Error, Please try again...');
+    });
+   }); 
+ });
+
+  $("#newitemInv").click(function(e) {
+  e.preventDefault();
+  $("#newITemPanel").toggle();
+
+  });
+
+  function okmsg()
+  {
+    Swal.fire(
+      'Ok!',
+      'Updated!',
+      'success'
+      )
+  }
+
+  function errorMsg()
+  {
+    Swal.fire({
+      type: 'error',
+      title: 'Oops...',
+      text: 'Every gap must be filled!',
+      footer: ''
+    })
+  }
+
+  function redirect()
+  {
+    window.location.href = "editres.php"
+  }
+
+  function redirectWorker()
+  {
+    window.location.href = "editworker.php";
+  }
+
+  function redirectInv()
+  {
+    window.location.href = "editinvertory.php";
+  }
+
+  function validateModal()
+  {
+    var forwho = $('#forwho').val();
+    var reservedate = $('#reservedate').val();
+    var pepoleno = $('#pepoleNo').val();
+    var message = $('#message').val();
+    var progress = $('#progress').val();
+
+    if(forwho == "" || reservedate == "" || pepoleno == "" || message == "" || progress == "")
+    {
+      alert("All gaps must be filled!");
+    }
+
+    else
+    {
+      document.cookie = "forwho=" + forwho;
+      document.cookie = "reservedate=" + reservedate;
+      document.cookie = "pepoleno=" + pepoleno;
+      document.cookie = "message=" + message;
+      document.cookie = "progress=" + progress;
+      redirect();
+    }
+  }
+
+  function invModal()
+  {
+    var wrapperid = $('#wrapperid').val();
+    var wrapperName = $('#wrapper_name').val();
+    var wrapperQuantity = $('#wrapper_quantity').val();
+    var InvUpdatedBy = $('#Inv_updated_by').val();
+
+    if(wrapperName == "" || wrapperQuantity == "" || InvUpdatedBy == "")
+    {
+      alert("All gaps must be filled!");
+    }
+
+    else
+    {
+      document.cookie = "wrapperid=" + wrapperid;
+      document.cookie = "wrapperName=" + wrapperName;
+      document.cookie = "wrapperQuantity=" + wrapperQuantity;
+      document.cookie = "InvUpdatedBy=" + InvUpdatedBy;
+      redirectInv();
+    }
+  }
+
+  function validateWorkerModal()
+  {
+    var workerusername = $('#workerusername').val();
+    var roleid = $('#role_id').val();
+
+    if(workerusername == "" || roleid == "")
+    {
+      alert("All gaps must be filled");
+    }
+
+    else
+    {
+      document.cookie = "workid=" + data.id;
+      document.cookie = "workerusername=" + workerusername;
+      document.cookie = "roleid=" + roleid;
+      redirectWorker();
+    }
+  }
+
+  $(document).ready(function(){   
+    $(document).on('click', '#getReview', function(e){  
+      e.preventDefault();  
+      var rev_id = $(this).data('id');    
+      $('#review-detail').hide();  
+      $.ajax({
+        url: 'reviewrev.php',
+        type: 'POST',
+        data: 'rev_id='+rev_id,
+        dataType: 'json',
+        cache: false
+      })
+      .done(function(data){
+        $('#review-detail').hide();
+        $('#review-detail').show();
+        $('#revid').html(data.id);
+        $('#title2').html(data.title);
+        $('#author2').html(data.author);      
+        $('#website2').html(data.website);      
+        $('#url2').html(data.url);      
+        $('#message2').html(data.message);
+
+      })
+      .fail(function(){
+        $('#contact-detail').html('Error, Please try again...');
+      });
+    }); 
+  });
+
+  jQuery(document).ready(function (e) {
+    function t(t) {
+      e(t).bind("click", function (t) {
+        t.preventDefault();
+        e(this).parent().fadeOut()
+      })
+    }
+    e(".dropdown-toggle").click(function () {
+      var t = e(this).parents(".button-dropdown").children(".dropdown-menu").is(":hidden");
+      e(".button-dropdown .dropdown-menu").hide();
+      e(".button-dropdown .dropdown-toggle").removeClass("active");
+      if (t) {
+        e(this).parents(".button-dropdown").children(".dropdown-menu").toggle().parents(".button-dropdown").children(".dropdown-toggle").addClass("active")
+      }
+    });
+    e(document).bind("click", function (t) {
+      var n = e(t.target);
+      if (!n.parents().hasClass("button-dropdown")) e(".button-dropdown .dropdown-menu").hide();
+    });
+    e(document).bind("click", function (t) {
+      var n = e(t.target);
+      if (!n.parents().hasClass("button-dropdown")) e(".button-dropdown .dropdown-toggle").removeClass("active");
+    })
+  });
+
+</script>
+
+</body>
+</html>
