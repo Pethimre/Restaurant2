@@ -18,6 +18,17 @@
     }else{
         header("Location: ../index.php");
     }
+
+    $selectusername = "SELECT `role_id` FROM `users` WHERE username ='".$_SESSION["username"]."'";
+    $getuserdata = $db->getArray($selectusername);
+
+    if (count($getuserdata) > 0)
+    {
+        foreach ($getuserdata as $user) 
+        {
+            $roleid = (int)$user["role_id"];
+        }
+    }
 ?>
 
 <!DOCTYPE html>
@@ -118,7 +129,7 @@
                                     <input type="button" class="btn btn-danger" onclick="window.location.href='delete.php?foodid=<?php echo $food['id'];?>'" value="Remove">
                                 <?php endif; ?>
 
-                                <?php if(isset($_SESSION["username"]) && $_SESSION["username"] != "admin" && $food["class"] == "webshop") : ?>
+                                <?php if(isset($_SESSION["username"]) && $roleid == 2 && $food["class"] == "webshop") : ?>
                                     <form action="addtocart.php?item=<?php echo $food["id"]; ?>" method="post">
                                         <input type="submit" class="btn btn-success" value="Add to Cart">
                                         <input type="number" min="1" max="99" name="foodQuantity" value="1">

@@ -8,7 +8,7 @@
 	if (isset($_POST["addworker"])) {
 		$email = $db->escape($_POST["email"]);
 		$phone = $db->escape($_POST["phone"]);
-		$fullName = $db->escape($_POST["fullName"]);
+		$fullName = $db->escape($_POST["fullNameInput"]);
 		$roleid = $_POST["selectrole"];
 		$username = $db->escape($_POST["username"]);
 		$beginnerpassword = md5($username);

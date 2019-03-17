@@ -363,7 +363,7 @@ select
 
 <div id="modifyReserve" id="reserveList">
   <?php if(count($allreservations) == 0): ?>
-    <div class="container text-center" style="background-color: rgba(255,255,255,.5);"><h3> No Reservations Yet. </h3></div>
+    <div class="text-center" style="background-color: rgba(255,255,255,.5); height: 5vh; border-radius: 15px;"><h3 style="padding-top: 5px; padding-bottom: 5px;"> No Reservations Yet. </h3></div>
   <?php endif; ?>
   <?php if(count($allreservations) > 0): ?>
 
@@ -371,9 +371,9 @@ select
       <thead>
         <tr>
           <th scope="col">Reservation ID:</th>
-          <th scope="col">Ordered At</th>
+          <th scope="col">Booked At</th>
           <th scope="col">Status</th>
-          <th scope="col">Reserved By</th>
+          <th scope="col">Reserved For</th>
           <th scope="col">Review</th>
         </tr>
       </thead>
@@ -586,6 +586,7 @@ $allReviews = $db->getArray($selectReviews);
                       <th>Active Role:</th>
                      <td>
                        <select name="selectrole" id="workroles">
+                        <option value="">New Role..</option>
                          <?php foreach($allrole as $role): ?>
                             <?php if($role["role"] != "admin"): ?>
                               <option value="<?php echo $role['id']; ?>"><?php echo $role["role"]; ?></option>
