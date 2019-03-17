@@ -580,7 +580,7 @@ $allReviews = $db->getArray($selectReviews);
                    </tr> 
                    <tr>
                      <th>Username:</th>
-                     <td><input name="workerusername" type="text" value="" id="workerusername" name="workerusername"></td>
+                     <td id="workerusername"></td>
                    </tr>                                                                                 
                     <tr>
                       <th>Active Role:</th>
@@ -1094,7 +1094,7 @@ $("#modifyInv").click(function(e) {
       $('#worker-detail').hide();
       $('#worker-detail').show();
       $('#workid').val(data.id);
-      $('#workerusername').val(data.username);
+      $('#workerusername').html(data.username);
       $('#workerole').html(data.role);
       $('#role_id').val(data.role_id);     
 
@@ -1225,9 +1225,9 @@ $("#modifyInv").click(function(e) {
     var workerusername = $('#workerusername').val();
     var roleid = $('#role_id').val();
 
-    if(workerusername == "" || roleid == "")
+    if(roleid == "")
     {
-      alert("All gaps must be filled");
+      alert("If you dont change role, use cancel to go back.");
     }
 
     else

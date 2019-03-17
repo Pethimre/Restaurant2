@@ -286,6 +286,7 @@ $db = db::get();
       $allOrders = $db->getArray($selectOrders);*/
 
       ?>
+  </div>
 
       <!-- Review Modal -->
     </div>
@@ -293,10 +294,10 @@ $db = db::get();
      <div class="modal-dialog"> 
       <div class="modal-content">                  
        <div class="modal-header"> 
-         <button type="button" class="close" data-dismiss="modal" aria-hidden="true">*</button> 
-         <h4 class="modal-title">
+         <button type="button" class="close" data-dismiss="modal" aria-hidden="true"><i class="fal fa-times-circle"></i></button> 
+         <h3 class="modal-title">
            Reservation Details
-         </h4> 
+         </h3> 
        </div>          
        <div class="modal-body">                   
          <div id="employee-detail">                                        
@@ -328,10 +329,6 @@ $db = db::get();
                      <th>Progress</th>
                      <td id="progress"></td>
                    </tr> 
-                   <tr>
-                     <th>Price</th>
-                     <td id="price"></td>
-                   </tr> 
 
                    <tr>
                      <th>Message</th>
@@ -349,9 +346,6 @@ $db = db::get();
       </div>              
     </div> 
   </div>
-</div>
-
-
 </div>
 
 <form action="insert_contact.php" method="POST" id="contactPanel" style="padding-left: 15px;">
@@ -535,8 +529,6 @@ $db = db::get();
       $('#bookedat').html(data.bookedat);      
       $('#pepoleNo').html(data.pepoleNo);      
       $('#reserve_date').html(data.reserve_date);
-      if(data.price == 0){ $('#price').html("Not Paid yet.");}
-      else{$('#price').html(data.price);}
       $('#resmessage').html(data.message); 
 
     })

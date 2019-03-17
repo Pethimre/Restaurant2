@@ -5,15 +5,18 @@ if (isset($_POST["submit"])) {
 
 	$conn = mysqli_connect("localhost", "root", "", "restaurant");
 
-	$reservedate = $_POST["reserve_date"];
-	$endReserve = date_add($reservedate, date_interval_create_from_date_string('2 hours'));
+	$reservedate = new DateTime($_POST["reserve_date"]);
+	$reservedate->format('Y-m-d H:i:s');
+
+	$endReserve = (new DateTime($_POST["reserve_date"]))->modify('+2 hour')->format('Y-m-d H:i:s');
+
 	$forwho = mysqli_real_escape_string($conn, $_POST["forwho"]);
 	$phone = mysqli_real_escape_string($conn, $_POST["phone"]);
 	$email = mysqli_real_escape_string($conn, $_POST["email"]);
 	$pepolenumber = mysqli_real_escape_string($conn, $_POST["numberofpepole"]);
 	$pepolenumber = (int)$pepolenumber;
 	$message = mysqli_real_escape_string($conn, $_POST["message"]);
-	$bookedat = date("Y.m.d");
+	$bookedat = date("Y-m-d");
 	$tableNumber = mysqli_real_escape_string($conn, $_POST["tableNumber"]);
 
 	if (empty($reservedate) || empty($phone) || empty($email) || empty($reservedate) || empty($forwho) || empty($pepolenumber)) 
@@ -39,26 +42,14 @@ if (isset($_POST["submit"])) {
 				$userid = $userstuff["id"];
 			}
 
-			if (!empty($tableNumber)) {
+			/*if (!empty($tableNumber)) {
 				$selectReservedTablesQuery = "SELECT table_id FROM reservations WHERE (('$reservedate' <= reserve_date_end AND '$endReserve' >= reserve_date))";
-				$
+				$*/
 			}
 
-			$insertString = "INSERT INTO `reservations` (`id`, `forWho`, `reserve_date`, `reserve_date_end`, `tableNo`, `pepoleNo`, `message`, `progress`, `user_id`, `price`, `bookedat`) 
-			VALUES (NULL, 
-				'".$forwho."',
-				'".$reservedate."',
-				'".$endReserve."', 
-				'".$tableNumber."', 
-				'".$pepolenumber."', 
-				'".$message."', 
-				'open', 
-				'".$userid."',
-				'".$bookedat."')";
+			$insertString = "INSERT INTO `reservations` (`id`, `forWho`, `reserve_date`, `reserve_date_end`, `tableNo`, `pepoleNo`, `message`, `progress`, `user_id`, `bookedat`, `table_id`) VALUES (NULL, '$forwho', '".date_format($reservedate, 'Y-m-d H:i:s')."', '".date_format($endReserve, 'Y-m-d H:i:s')."', '$tableNumber', '$pepolenumber', '$message', 'open', '$userid', '$bookedat', '$tableNumber')";
 			mysqli_query($conn, $insertString);
-
-			echo "<script>swalert();</script>";
-
+			#var_dump($insertString);
 			header("location: ../index.php");
 
 		
@@ -68,6 +59,6 @@ if (isset($_POST["submit"])) {
 		}*/
 	}
 
-}
+#}
 	
  ?>
