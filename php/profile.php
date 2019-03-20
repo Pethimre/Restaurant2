@@ -435,11 +435,11 @@ $db = db::get();
             <th scope="row"><?php echo $cart["name"]; ?></th>
             <td><?php echo $cart["quantity"]; ?></td>
             <td><?php echo $cart["subtotal"]." HUF"; ?></td>
-            <td><a class="btn btn-danger" href=""><i class="fal fa-trash-alt"></i> Remove</a></td>
+            <td><a class="btn btn-danger" href="deletefromcart.php?item=<?php echo $cart['id']; ?>"><i class="fal fa-trash-alt"></i> Remove</a></td>
           </tr><?php $cancer = $cancer + intval($cart["subtotal"]); ?>
         <?php endforeach; ?>
         <tr>
-          <td><button class="btn btn-sm btn-danger"><i class="fal fa-cart-arrow-down"></i> Empty Cart</button></td>
+          <td><form method="post"><button class="btn btn-sm btn-danger" name="emptyCart"><i class="fal fa-cart-arrow-down"></i> Empty Cart</button></form></td>
           <td>Total:</td>
           <td><?php echo $cancer." HUF"; ?></td>
           <td><button class="btn btn-sm btn-success" name="placeOrder"><i class="fal fa-cart-plus"></i> Place Order</button></td>
@@ -448,6 +448,27 @@ $db = db::get();
     </table>
 
   <?php endif; ?>
+
+  <?php 
+  if (isset($_POST["emptyCart"])) {
+
+    $deleteCartQuery = "DELETE FROM cart WHERE user_id =".$user["id"];
+    $deleteCart = $db->query($deleteCartQuery);
+    echo "<script>window.location.href='profile.php'</script>";
+  }
+
+  if (isset($_POST["placeOrder"])) {
+    $now = date("Y-m-d H:i:s");
+
+    $insertOrderQuery = "INSERT INTO `orders` (`id`, `items`, `progress`, `user_id`, `total`, `ordered_at`) VALUES (NULL, '$orderList', 'open', '$userid', '$cancer', '$now');";
+    
+    $insertOrder = $db->query($insertOrderQuery);
+
+    $resetCartQuery = "DELETE FROM cart WHERE user_id = ".$userid;
+    $resetCart = $db->query($resetCartQuery);
+    echo "<script>window.location.href='../index.php?success=thankyou'</script>";
+  }
+  ?>
 
 </div> <!-- End review container -->
 </div>
