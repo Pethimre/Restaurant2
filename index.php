@@ -12,7 +12,7 @@
     require_once "php/insert_contact.php";
 
     $db = db::get();
-    $selectString = "SELECT * FROM foods WHERE class = 'restaurant'";
+    $selectString = "SELECT * FROM foods WHERE class = 'restaurant' OR class = 'both'";
     $allfeatured = $db->getArray($selectString);
 
     if(isset($_SESSION["username"]))
@@ -32,6 +32,10 @@
                     }
         $selectCartForUserQuery = "SELECT * FROM cart WHERE user_id = ".$userid;
         $cart = $db->getArray($selectCartForUserQuery);
+    }
+
+    if (isset($_GET["success"])) {
+        $success = $db->escape($_GET["success"]);
     }
 
 ?>
@@ -79,13 +83,13 @@
         ::-webkit-scrollbar-thumb {
             background: #666;
         }
-        input[type="date"] {
+        input[type="datetime-local"] {
             background:#fff url(https://cdn1.iconfinder.com/data/icons/cc_mono_icon_set/blacks/16x16/calendar_2.png)  95% 50% no-repeat ;
         }
-        input[type="date"]::-webkit-inner-spin-button {
+        input[type="datetime-local"]::-webkit-inner-spin-button {
           display: none;
       }
-      input[type="date"]::-webkit-calendar-picker-indicator {
+      input[type="datetime-local"]::-webkit-calendar-picker-indicator {
           opacity: 0;
       }
       textarea {
@@ -122,8 +126,34 @@
             border: none;
         }
         </style>
+        <script>
+            function errormsg(errortext)
+            {
+              Swal.fire({
+                type: 'error',
+                title: 'Oops...',
+                text: errortext + "!",
+                footer: "If you need help, contact us <a href='../index.php' style='color:black;text-decoration:none;'> <i class='fas fa-arrow-right'></i></a>."
+            })
+          }
+
+          function okmsg(oktext)
+          {
+              Swal.fire(
+                'Ok!',
+                oktext + '!',
+                'success'
+                )
+          }
+
+      </script>
     </head>
     <body data-spy="scroll" data-target="#template-navbar">
+        <?php 
+            if ($success == "thankyou") {
+                echo "<script>oktext = 'Thank you for choosing us'; okmsg(oktext);</script>";
+            }
+         ?>
         <!--== 4. Navigation ==-->
         <nav id="template-navbar" class="navbar navbar-default custom-navbar-default navbar-fixed-top">
             <div class="container">
@@ -154,7 +184,7 @@
                         <?php     if (isset($_SESSION["username"]) && !($_SESSION["username"] == "admin")) { if($roleid != 2){echo "<li><a href='php/router.php' >Dashboard</a></li>";} if($roleid == 2){echo "<li><a href='php/profile.php' >Profile</a></li>";} } ?>
                         <?php     if (isset($_SESSION["username"])) { if($_SESSION["username"] == "admin"){echo "<li><a href='php/admin.php'>Admin Page</a></li>";}
                         echo "<li><a href='php/logout.php'><i class='fal fa-sign-out-alt' title='Log Out'></i></a></li>";} ?>
-                        <?php if(count($cart) > 0): ?>
+                        <?php if(isset($_SESSION["username"]) && count($cart) > 0): ?>
                             <li style="color: white;"><a href="php/cart.php"><i class="far fa-shopping-cart"></i><?php echo count($cart); ?></a></li>
                         <?php endif; ?>
                     </ul>
@@ -522,7 +552,7 @@
                                                 <input type="text" class="form-control reserve-form empty iconified" name="forwho" id="name" required="required" placeholder="  &#xf007;  Name" value="<?php if(!empty($fullname)){echo $fullname;} ?>" >
                                             </div>
                                             <div class="form-group">
-                                                <input type="text" class="form-control reserve-form empty iconified" name="numberofpepole" id="name" required="required" placeholder=" &#xf0c0;  Number of Pepole">
+                                                <input type="number" min="1" max="20" class="form-control reserve-form empty iconified" name="numberofpepole" id="name" required="required" placeholder=" &#xf0c0;  Number of Pepole">
                                             </div>
                                         </div>
 
@@ -539,11 +569,16 @@
                                             <textarea type="text" name="message" class="form-control reserve-form empty iconified" id="message" rows="3" placeholder="  &#xf086;  We're listening"></textarea>
                                         </div>
 
-                                        <div class="col-md-12 col-sm-12">
-                                        <div class="form-group">
-                                                <input type="date" class="form-control reserve-form empty iconified" name="reserve_date" id="datepicker" required="required" placeholder="&#xf017;  Time">
+                                        <div class="col-md-6 col-sm-6">
+                                            <div class="form-group">
+                                                <input type="datetime-local" class="form-control reserve-form empty iconified" name="reserve_date" id="datepicker" required="required" placeholder="&#xf017;  Time">
                                             </div>
-                                    </div>  
+                                        </div> 
+                                        <div class="col-md-6 col-sm-6">
+                                            <div class="form-group">
+                                                <input type="number" min="1" max="20" class="form-control reserve-form empty iconified" name="tableNumber" id="tableNumber" required="required" placeholder=" &#xf0c0;  Select Table">
+                                            </div>
+                                        </div> 
 
                                         <div class="col-md-12 col-sm-12">
                                             <button type="submit" id="submit" name="submit" class="btn btn-reservation">
@@ -559,21 +594,31 @@
                             <div class="col-md-2 hidden-sm hidden-xs"></div>
 
                             <div class="col-md-4 col-sm-6 col-xs-12">
-                                <div class="opening-time">
+                                <div class="opening-time text-center">
                                     <h3 class="opening-time-title">Hours</h3>
-                                    <p>Mon to Fri: 7:30 AM - 11:30 AM</p>
-                                    <p>Sat & Sun: 8:00 AM - 9:00 AM</p>
+                                    <p>Mon to Fri: 7:00 AM - 23:00 PM</p>
+                                    <p>Sat & Sun: 7:00 AM - 23:00 PM</p>
 
-                                    <div class="launch">
+                                    <div class="launch text-center">
                                         <h4>Lunch</h4>
                                         <p>Mon to Fri: 12:00 PM - 5:00 PM</p>
+                                        <p>Sat to Sun: 12:00 PM - 5:00 PM</p>
                                     </div>
 
-                                    <div class="dinner">
+                                    <div class="dinner text-center">
                                         <h4>Dinner</h4>
-                                        <p>Mon to Sat: 6:00 PM - 1:00 AM</p>
-                                        <p>Sun: 5:30 PM - 12:00 AM</p>
+                                        <p>Mon to Fri: 5:00 PM - 23:00 PM</p>
+                                        <p>Sun to Sun: 5:00 PM - 23:00 PM</p>
                                     </div>
+                                    <hr>
+                                    <h4 class="text-center">Our Services:</h4>
+                                    <hr>
+                                    <ul style="text-decoration: none; list-style-type: none; text-align: left;">
+                                        <li><i class="fal fa-wifi"></i> Free Wi-fi</li>
+                                        <li><i class="fal fa-music"></i> Live music after 7:00 PM</li>
+                                        <li><i class="fal fa-camera-alt"></i> Great View</li>
+                                        <li><i class="fab fa-stripe-s"></i>pecial Foods</li>
+                                    </ul>
                                 </div>
                             </div>
                         </div>
