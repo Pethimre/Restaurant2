@@ -17,6 +17,7 @@ if (isset($_POST["submit"])) {
 	$pepolenumber = (int)$pepolenumber;
 	$message = mysqli_real_escape_string($conn, $_POST["message"]);
 	$bookedat = date("Y-m-d");
+	$now = date('Y-m-d H:i:s');
 	$tableNumber = mysqli_real_escape_string($conn, $_POST["tableNumber"]);
 
 	if (empty($reservedate) || empty($phone) || empty($email) || empty($reservedate) || empty($forwho) || empty($pepolenumber)) 
@@ -27,8 +28,8 @@ if (isset($_POST["submit"])) {
 		echo "Our biggest table can hosts 20 people. If you need more space, contact us and ask for event booking.";
 	}
 	else
-	{		
-			if(empty($message)){$message = "No message  given.";}
+	{	
+		if(empty($message)){$message = "No message  given.";}
 
 			$userid = 9; //basically, you are booking as a quest if you not logged in
 
@@ -42,23 +43,17 @@ if (isset($_POST["submit"])) {
 				$userid = $userstuff["id"];
 			}
 
-			/*if (!empty($tableNumber)) {
-				$selectReservedTablesQuery = "SELECT table_id FROM reservations WHERE (('$reservedate' <= reserve_date_end AND '$endReserve' >= reserve_date))";
-				$*/
+			if ($now < $reservedate) {echo "<script>alert('Your date has already been passed.');</script>";}
+
+			else
+			{
+				$insertString = "INSERT INTO `reservations` (`id`, `forWho`, `reserve_date`, `reserve_date_end`, `tableNo`, `pepoleNo`, `message`, `progress`, `user_id`, `bookedat`, `table_id`) VALUES (NULL, '$forwho', '".date_format($reservedate, 'Y-m-d H:i:s')."', '".date_format($endReserve, 'Y-m-d H:i:s')."', '$tableNumber', '$pepolenumber', '$message', 'open', '$userid', '$bookedat', '$tableNumber')";
+				mysqli_query($conn, $insertString);
+				header("location: ../index.php");
 			}
 
-			$insertString = "INSERT INTO `reservations` (`id`, `forWho`, `reserve_date`, `reserve_date_end`, `tableNo`, `pepoleNo`, `message`, `progress`, `user_id`, `bookedat`, `table_id`) VALUES (NULL, '$forwho', '".date_format($reservedate, 'Y-m-d H:i:s')."', '".date_format($endReserve, 'Y-m-d H:i:s')."', '$tableNumber', '$pepolenumber', '$message', 'open', '$userid', '$bookedat', '$tableNumber')";
-			mysqli_query($conn, $insertString);
-			#var_dump($insertString);
-			header("location: ../index.php");
+		}
 
-		
-		/*else
-		{
-			echo "<script>alert('Invalid date entered!');</script>";var_dump($reservedate);
-		}*/
 	}
-
-#}
 	
  ?>
