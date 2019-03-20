@@ -6,11 +6,14 @@ if (isset($_POST["submit"])) {
 	$conn = mysqli_connect("localhost", "root", "", "restaurant");
 
 	$reservedate = $_POST["reserve_date"];
+	$endReserve = date('Y-m-d H:i:s',strtotime('+2 hours',strtotime($reservedate)));
 	$forwho = mysqli_real_escape_string($conn, $_POST["forwho"]);
 	$phone = mysqli_real_escape_string($conn, $_POST["phone"]);
 	$email = mysqli_real_escape_string($conn, $_POST["email"]);
 	$pepolenumber = mysqli_real_escape_string($conn, $_POST["numberofpepole"]);
 	$pepolenumber = (int)$pepolenumber;
+	$tableNumber = mysqli_real_escape_string($conn, $_POST["tableNumber"]);
+	$tableNumber = (int)$tableNumber;
 	$message = mysqli_real_escape_string($conn, $_POST["message"]);
 	$bookedat = date("Y.m.d");
 
@@ -34,17 +37,17 @@ if (isset($_POST["submit"])) {
 				$userid = $userstuff["id"];
 			}
 
-			$insertString = "INSERT INTO `reservations` (`id`, `forWho`, `reserve_date`, `tableNo`, `pepoleNo`, `message`, `progress`, `user_id`, `price`, `bookedat`) 
+			$insertString = "INSERT INTO `reservations` (`id`, `forWho`, `reserve_date`, `reserve_date_end`, `pepoleNo`, `message`, `progress`, `user_id`, `bookedat`, `table_id`) 
 			VALUES (NULL, 
 				'".$forwho."',
-				'".$reservedate."', 
-				'', 
+				'".$reservedate."',
+				'".$endReserve."', 
 				'".$pepolenumber."', 
 				'".$message."', 
 				'open', 
 				'".$userid."',
-				'', 
-				'".$bookedat."')";
+				'".$bookedat."',
+				'".$tableNumber."')";
 			mysqli_query($conn, $insertString);
 
 			echo "<script>swalert();</script>";
