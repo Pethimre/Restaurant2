@@ -9,7 +9,7 @@ require_once "paginator.php";
 
 $currentPage = $_GET["page"];
 $currentPage = (int)$currentPage;
-$selectfoods2 = "SELECT * FROM foods WHERE class = 'webshop'";
+$selectfoods2 = "SELECT * FROM foods WHERE class = 'webshop' OR class = 'both'";
 $numberOfRows = $db->numrows($selectfoods2);
 
 $selectusername = "SELECT `role_id` FROM `users` WHERE username ='".$_SESSION["username"]."'";

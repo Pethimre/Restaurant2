@@ -12,7 +12,7 @@
     require_once "php/insert_contact.php";
 
     $db = db::get();
-    $selectString = "SELECT * FROM foods WHERE class = 'restaurant'";
+    $selectString = "SELECT * FROM foods WHERE class = 'restaurant' OR class = 'both'";
     $allfeatured = $db->getArray($selectString);
 
     if(isset($_SESSION["username"]))
@@ -506,7 +506,7 @@
             </div> <!-- /.wrapper -->
         </section> <!-- /#reserve -->
 
-
+        <?php $nowKek = date("Y-m-d H:i:s"); ?>
 
         <section class="reservation">
             <img class="img-responsive section-icon hidden-sm hidden-xs" src="images/icons/reserve_color.png">
@@ -541,7 +541,7 @@
 
                                         <div class="col-md-6 col-sm-6">
                                             <div class="form-group">
-                                                <input type="datetime-local" class="form-control reserve-form empty iconified" name="reserve_date" id="datepicker" required="required" placeholder="&#xf017;  Time">
+                                                <input type="datetime-local" class="form-control reserve-form empty iconified" name="reserve_date" id="datepicker" required="required" placeholder="&#xf017;  Time" min="">
                                             </div>
                                         </div> 
                                         <div class="col-md-6 col-sm-6">
@@ -585,6 +585,7 @@
                                     <hr>
                                     <ul style="text-decoration: none; list-style-type: none; text-align: left;">
                                         <li><i class="fal fa-wifi"></i> Free Wi-fi</li>
+                                        <li><i class="fal fa-music"></i> Live music after 7:00 PM</li>
                                         <li><i class="fal fa-camera-alt"></i> Great View</li>
                                         <li><i class="fab fa-stripe-s"></i>pecial Foods</li>
                                     </ul>

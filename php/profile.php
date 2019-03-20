@@ -255,7 +255,7 @@ $db = db::get();
 
           <input type="password" class="form-control registry" placeholder="Confirm With Your Password" id="confirmpw" name="password" onfocus="this.style.color='rgba(66,58,58,1)'" required>
           <button class="btn btn-success" name="submit"><i class="fas fa-user-cog"></i> Save Modifications</button>
-          <h3 class="text-center">Profile Picture is Optional</h3>
+          <h3 class="text-center" style="color: white; background-color: rgba(0,0,0,.39);">Profile Picture is Optional</h3>
         </form>
         <form action="uprofile.php" method="POST" enctype="multipart/form-data">
           <p>
