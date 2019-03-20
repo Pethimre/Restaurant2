@@ -9,16 +9,26 @@ session_start();
     if (isset($_SESSION["username"])) {
         require_once "db.php";
         $db = db::get();
-        $selectUserDataQuery = "SELECT profilepic, coverpic, id FROM users WHERE username ='".$_SESSION["username"]."'";
-        $getUserData = $db->query($selectUserDataQuery);
+            $selectUserDataQuery = "SELECT profilepic, coverpic, id FROM users WHERE username ='".$_SESSION["username"]."'";
+            $getUserData = $db->getArray($selectUserDataQuery);
 
-        if (count($getUserData) > 0) {
-            foreach ($getUserData as $user) {
-                $profilepic = $user["profilepic"];
-                $coverpic = $user["coverpic"];
-                $userid = $user["id"];
+            if (count($getUserData) > 0) {
+                foreach ($getUserData as $user) {
+                    $profilepic = $user["profilepic"];
+                    $coverpic = $user["coverpic"];
+                    $userid = $user["id"];
+                }
+                $countCartQuery = "SELECT * FROM cart WHERE user_id =".$userid;
+                $countCart = $db->numrows($countCartQuery);
+
+                if ($countCart == 0) {
+                    echo "<script>window.location.href='../index.php'</script>";
+                }
             }
-        }
+    }
+    else
+    {
+        header("location: ../index.php");
     }
 
     ?>
@@ -108,9 +118,9 @@ session_start();
             </div><!-- /.row -->
         </nav>
 
-        <section id="about" class="about">
+        <section>
 
-           <div class="container content" style="background-color: rgba(216,216,216,1); margin-top: 7%; border: 1px solid gray; border-radius: 15px; height: 90%;">
+           <div class="container content" style="background-color: rgba(216,216,216,1); margin-top: 7%; border: 1px solid gray; border-radius: 15px; height: 90vh;">
                 <div class="jumbotron text-center" style="<?php if(!empty($coverpic)){echo "background-image: url('../images/profiles/".$_SESSION['username']."/".$coverpic."');";}else{echo "../images/background.jpg);";} ?> background-size: cover; background-repeat: no-repeat; position: relative; background-position: center center; color: white; margin-top: 1%;">
                     <h3 class="jumbotrontext"><?php echo $_SESSION["username"]."'s shopping cart"; ?></h3>
                 </div>
@@ -118,6 +128,7 @@ session_start();
                 $selectCartForUserQuery = "SELECT cart.*, foods.name FROM cart LEFT JOIN foods ON cart.food_id = foods.id WHERE cart.user_id = ".$userid;
                 $cart = $db->getArray($selectCartForUserQuery);
                 $cancer = 0;
+                $orderList = "";
 
                 ?>
                     <table class="table text-center" align="center">
@@ -130,27 +141,44 @@ session_start();
                       </tr>
                   </thead>
                   <tbody>
-                    <?php if(count($cart) > 0): ?>
+                    <?php $i = 1; if(count($cart) > 0): ?>
                       <?php foreach($cart as $cartItem): ?>
-                        <tr>
+                        <tr><?php if($i != 1){$orderList .= "," .$cartItem["id"];}else{$orderList .= $cartItem["id"];} ?>
                             <th scope="row" class="text-center"><?php echo $cartItem["name"]; ?></th>
                             <td ><?php echo $cartItem["quantity"]; ?></td>
-                            <td><?php echo $cartItem["subtotal"]." HUF"; ?></td>
-                            <td><button class="btn btn-sm btn-danger">Changed my mind..</button></td><?php $cancer = $cancer + intval($cartItem["subtotal"]); ?>
-                        </tr>
+                            <td><?php echo $cartItem["subtotal"]." HUF";?></td>
+                            <td><button class="btn btn-sm btn-danger" name="deleteitem" onclick="window.location.href='deletefromcart.php?item=<?php echo $cartItem["id"]; ?>'"> Changed my mind..</button></td><?php $cancer = $cancer + intval($cartItem["subtotal"]); ?>
+                        </tr><?php $i++; ?>
                     <?php endforeach; ?>
                 <?php endif; ?>
                 <tr>
+                  <form action="" method="post">
                     <td></td>
                     <td>Total:</td>
                     <td><?php echo $cancer." HUF"; ?></td>
                     <td><button class="btn btn-sm btn-success" name="placeOrder"><i class="fal fa-cart-plus"></i> Place Order</button></td>
+                  </form>
                 </tr>
             </tbody>
         </table>
             </div>
 
         </section>
+
+    <?php 
+        if (isset($_POST["placeOrder"])) {
+            $now = date("Y-m-d H:i:s");
+
+            $insertOrderQuery = "INSERT INTO `orders` (`id`, `items`, `progress`, `user_id`, `total`, `ordered_at`) VALUES (NULL, '$orderList', 'open', '$userid', '$cancer', '$now');";
+                
+            $insertOrder = $db->query($insertOrderQuery);
+
+            $resetCartQuery = "DELETE FROM cart WHERE user_id = ".$userid;
+            $resetCart = $db->query($resetCartQuery);
+            echo "<script>window.location.href='../index.php?success=thankyou'</script>";
+        }
+     ?>
+
     <br>
     <footer>
         <div class="container" style="margin-bottom: 0 auto;">

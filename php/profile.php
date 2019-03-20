@@ -255,7 +255,7 @@ $db = db::get();
 
           <input type="password" class="form-control registry" placeholder="Confirm With Your Password" id="confirmpw" name="password" onfocus="this.style.color='rgba(66,58,58,1)'" required>
           <button class="btn btn-success" name="submit"><i class="fas fa-user-cog"></i> Save Modifications</button>
-          <h3 class="text-center" style="color: white; background-color: rgba(0,0,0,.39);">Profile Picture is Optional</h3>
+          <h3 class="text-center" style="background-color: rgba(0,0,0,.33); color: white;">Profile Picture is Optional</h3>
         </form>
         <form action="uprofile.php" method="POST" enctype="multipart/form-data">
           <p>
@@ -273,7 +273,8 @@ $db = db::get();
           </p>
           <button class="btn btn-sm btn-success" name="uploadProfile"><i class="fal fa-camera"></i> Save Profile Picture</button>
         </form>
-
+      </div>
+    </div>
       <?php 
 
       $selectReservations = "SELECT * FROM reservations WHERE user_id = '".$user['id']."' ";
@@ -282,22 +283,20 @@ $db = db::get();
       $selectCartItems = "SELECT cart.*, foods.name FROM cart LEFT JOIN foods ON cart.food_id = foods.id WHERE cart.user_id = ".$user['id'];
       $cartContent = $db->getArray($selectCartItems);
 
-      /*$selectOrders = "SELECT * FROM cart WHERE user_id = '" .$user["id"]."'";
-      $allOrders = $db->getArray($selectOrders);*/
+      $selectOrders = "SELECT * FROM orders WHERE user_id = '" .$user["id"]."'";
+      $allOrders = $db->getArray($selectOrders);
 
       ?>
-  </div>
 
       <!-- Review Modal -->
-    </div>
     <div id="res-modal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true" style="display: none;">
      <div class="modal-dialog"> 
       <div class="modal-content">                  
        <div class="modal-header"> 
-         <button type="button" class="close" data-dismiss="modal" aria-hidden="true"><i class="fal fa-times-circle"></i></button> 
-         <h3 class="modal-title">
+         <button type="button" class="close" data-dismiss="modal" aria-hidden="true">*</button> 
+         <h4 class="modal-title">
            Reservation Details
-         </h3> 
+         </h4> 
        </div>          
        <div class="modal-body">                   
          <div id="employee-detail">                                        
@@ -329,7 +328,6 @@ $db = db::get();
                      <th>Progress</th>
                      <td id="progress"></td>
                    </tr> 
-
                    <tr>
                      <th>Message</th>
                      <td id="resmessage"></td>
@@ -346,6 +344,7 @@ $db = db::get();
       </div>              
     </div> 
   </div>
+</div>
 </div>
 
 <form action="insert_contact.php" method="POST" id="contactPanel" style="padding-left: 15px;">
@@ -407,7 +406,7 @@ $db = db::get();
             <th scope="row"><?php echo $orders["id"]; ?></th>
             <td><?php echo $orders["ordered_at"]; ?></td>
             <td><?php echo $orders["progress"]; ?></td>
-            <td><a class="btn btn-success" href=""><i class="fas fa-search"></i>Review</a></td>
+            <td><a class="btn btn-success" href="order.php?order=<?php echo $orders['id']; ?>"><i class="fas fa-search"></i>Review</a></td>
           </tr>
         <?php endforeach; ?>
       </tbody>
@@ -452,8 +451,6 @@ $db = db::get();
 
 </div> <!-- End review container -->
 </div>
-</div>
-
 <script src="../js/bootstrap.min.js"></script>
 <script src="../js/owl.carousel.min.js"></script>
 <script type="text/javascript" src="../js/jquery.mixitup.min.js" ></script>
@@ -540,6 +537,7 @@ $db = db::get();
 </script>
 <div class="card-footer" style="background: inherit; border-color: inherit;">
 
+</div>
 </div>
 </body>
 </html>
