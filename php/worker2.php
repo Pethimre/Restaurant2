@@ -128,8 +128,8 @@ if (isset($success) && $success == "donePw") {
   echo "<script>oktext = 'It is done. Next time you must use your new password for login'; okmsg(oktext);</script>";
 }
 
-if (isset($error) && $error == "kek") {
-  echo "<script> errortext = 'Your should change your password.'; infoMsg(errortext);</script>";
+if (isset($error) && $error == "error") {
+  echo "<script> errortext = 'Invalid id entered.'; errorMsg(errortext);</script>";
 }
 
  ?>
@@ -149,8 +149,8 @@ if (isset($error) && $error == "kek") {
 
       <div class="collapse navbar-collapse" id="Food-fair-toggle">
         <ul class="nav navbar-nav navbar-right">
-          <li><a href="../index.php"><i class="fal fa-chevron-left"></i><i class="fal fa-chevron-left"></i>Main Page</a></li>
-          <li><a href="#" id="modify"><i class="fal fa-address-card"></i>Modify Profile</a></li>
+          <li><a href="../index.php"><i class="fal fa-chevron-left"></i><i class="fal fa-chevron-left"></i> Main Page</a></li>
+          <li><a href="#" id="modify"><i class="fal fa-address-card"></i> Modify Profile</a></li>
           <li><a href="logout.php" title="Log Out"><i class="fal fa-sign-out-alt"></i> Logout</a></li>
         </ul>
       </div><!-- /.navbar-collapse -->
@@ -165,14 +165,14 @@ if (isset($error) && $error == "kek") {
           require_once "db.php";
           $db = db::get();
 
-          $selectOrders = "SELECT * FROM orders";
+          $selectOrders = "SELECT orders.*, users.username FROM orders LEFT JOIN users ON orders.user_id = users.id WHERE orders.progress = 'open' OR orders.progress = 'suspended'";
           $allorders = $db->getArray($selectOrders);
 
           ?>
           <br>
           <div style="background-color: rgba(255,255,255,.1);" id="reserveList">
             <?php if(count($allorders) == 0): ?>
-              <div class="container text-center" style="background-color: rgba(255,255,255,.5); width: 98%!important; border-radius: 20px;"><h3> No Reservation Yet. </h3></div>
+              <div class="container text-center" style="background-color: rgba(255,255,255,.5); width: 98%!important; border-radius: 20px;"><h3> No Orders at the moment. </h3></div>
             <?php endif; ?>
             <?php if(count($allorders) > 0): ?>
 
@@ -182,19 +182,26 @@ if (isset($error) && $error == "kek") {
                     <th scope="col">Reservation ID:</th>
                     <th scope="col">Ordered At</th>
                     <th scope="col">Status</th>
-                    <th scope="col">Reserved By</th>
+                    <th scope="col">Ordered By</th>
                     <th scope="col" id="togglerev"><div id="hideRev"><i class="fal fa-eye-slash"></i> Hide</div><div id="showrev"><i class="fal fa-eye"></i> Show</div></th>
                   </tr>
                 </thead>
                 <tbody class="revitem">
                   <?php foreach($allorders as $orders): ?>
-                    <tr style="text-align:left;">
+                    <tr style="text-align:left;"><form action="updateorder.php?item=<?php echo $orders['id']; ?>" method="post">
                       <th scope="row"><?php echo $orders["id"]; ?></th>
-                      <td><?php echo $orders["bookedat"]; ?></td>
+                      <td><?php echo $orders["ordered_at"]; ?></td>
                       <td><?php echo $orders["progress"]; ?></td>
-                      <td><?php echo $orders["forWho"]; ?></td>
-                      <td><button data-toggle="modal" data-target="#res-modal" data-id="<?php echo $orders["id"]; ?>" id="getEmployee" onclick="reload()" class="btn btn-sm btn-success"><i class="fas fa-edit"></i>Edit</button></td>
-                    </tr>
+                      <td><?php echo $orders["username"]; ?></td>
+                      <td>
+                        <select name="statusUpdate">
+                          <option value="delivered">Delivered</option>
+                          <option value="suspended">Suspended</option>
+                          <option value="canceled">Canceled</option>
+                        </select>
+                        <button class="btn btn-sm btn-success" name="updateOrder"><i class="fas fa-edit"></i> Edit</button>
+                      </td>
+                    </tr></form>
                   <?php endforeach; ?>
                 </tbody>
               </table>
@@ -238,75 +245,7 @@ if (isset($error) && $error == "kek") {
       </div>
     </div>
 
-      <!-- Modal 2 -->
-
-      <div id="res-modal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true" style="display: none;">
-        <form action="admin.php" method="POST">
-         <div class="modal-dialog"> 
-          <div class="modal-content">                  
-           <div class="modal-header"> 
-             <button type="button" class="close" data-dismiss="modal" aria-hidden="true"><i class="far fa-times-circle"></i></button> 
-             <h4 class="modal-title">
-               Reservation Details
-             </h4> 
-           </div>          
-           <div class="modal-body">                   
-             <div id="employee-detail">                                        
-               <div class="row"> 
-                 <div class="col-md-12">                         
-                   <div class="table-responsive">        
-                     <form action="" method="POST" id="insert_form">                     
-                       <table class="table table-striped table-bordered">
-                         <tr>
-                           <th>Reservation ID</th>
-                           <td id=""><input type="text" id="resid" value="" readonly="true" style="border: none; outline: none; text-decoration: none;" name="resid"></td>
-                         </tr> 
-                         <tr>
-                           <th>Reserved By:</th>
-                           <td id=""><iframe src="iframe/userid.php" frameborder="0" id="reservedby" height="25px" scrolling="no"></iframe></td>
-                         </tr>                                     
-                         <tr>
-                           <th>For Who</th>
-                           <td><input type="text" value="" id="forwho" name="forwho" readonly="true"></td>
-                         </tr>                                         
-                         <tr>
-                           <th>Booked At:</th>
-                           <td id=""><input type="date" value="" id="bookedat" name="bookedat" readonly="true"></td>
-                         </tr>   
-                         <tr>
-                           <th>Reserved To:</th>
-                           <td id=""><input type="date" value="" id="reservedate" name="reservedate"></td>
-                         </tr>                                         
-                         <tr>
-                           <th>People Number</th>
-                           <td id=""><input type="number" id="pepoleNo" value="" name="pepoleNo"></td>
-                         </tr> 
-                         <tr>
-                           <th>Message:</th>
-                           <td id=""><textarea name="message" id="message" rows="3"></textarea></td>
-                         </tr>                                             
-                         <tr>
-                           <th>Progress</th>
-                           <td id=""><input type="text" value="" id="progress" name="progress"></td>
-                         </tr> 
-
-                       </table>
-                     </form>                                
-                   </div>                                       
-                 </div> 
-               </div>                       
-             </div>                              
-           </div>           
-           <div class="modal-footer"> 
-            <button type="button" class="btn btn-danger" data-dismiss="modal">Close</button> 
-            <button id="insert" class="btn btn-success" onclick="return validateModal()">Update</button>
-          </div>              
-        </div> 
-      </div>
-    </form>
-  </div>
-
-
+     
   <script>
     $("#profilePanel").hide();
     $("#showrev").hide();
@@ -325,74 +264,6 @@ if (isset($error) && $error == "kek") {
       $("#showrev").toggle();
       $(".revitem").toggle("slow");
     });
-
-    function reload()
-    {
-      document.getElementById('reservedby').contentWindow.location.reload();
-    }
-
-    function redirect()
-    {
-      window.location.href = "editres.php"
-    }
-
-    function validateModal()
-    {
-      var forwho = $('#forwho').val();
-      var reservedate = $('#reservedate').val();
-      var pepoleno = $('#pepoleNo').val();
-      var message = $('#message').val();
-      var progress = $('#progress').val();
-
-      if(forwho == "" || reservedate == "" || pepoleno == "" || message == "" || progress == "")
-      {
-        alert("All gaps must be filled!");
-      }
-
-      else
-      {
-        document.cookie = "forwho=" + forwho;
-        document.cookie = "reservedate=" + reservedate;
-        document.cookie = "pepoleno=" + pepoleno;
-        document.cookie = "message=" + message;
-        document.cookie = "progress=" + progress;
-        redirect();
-      }
-    }
-
-    $(document).ready(function(){   
-     $(document).on('click', '#getEmployee', function(e){  
-       e.preventDefault();  
-       var empid = $(this).data('id');    
-       $('#employee-detail').hide();  
-       $.ajax({
-        url: 'review.php',
-        type: 'POST',
-        data: 'empid='+empid,
-        dataType: 'json',
-        cache: false
-      })
-       .done(function(data){
-        $('#employee-detail').hide();
-        $('#employee-detail').show();
-        $('#resid').val(data.id);
-        $('#forwho').val(data.forWho);
-        $('#progress').val(data.progress);
-        $('#bookedat').val(data.bookedat);      
-        $('#reservedate').val(data.reserve_date);      
-        $('#pepoleNo').val(data.pepoleNo);      
-        $('#message').val(data.message);
-
-        document.cookie = "userid="+data.user_id;
-        document.cookie = "id="+data.id;
-        document.getElementById('reservedby').contentWindow.location.reload();
-
-      })
-       .fail(function(){
-        $('#employee-detail').html('Error, Please try again...');
-      });
-     }); 
-   });
  </script>
 
 </body>

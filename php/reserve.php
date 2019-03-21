@@ -1,7 +1,18 @@
 <?php 
 	session_start();
+	require_once "db.php";
+
+	$db = db::get();
 
 if (isset($_POST["submit"])) {
+
+	$hour = 7;
+    $minute = 0;
+    $testDate = date("H:i:s", strtotime("$hour:$minute"));
+
+    $hour2 = 21;
+    $minute2 = 0;
+    $testDate2 = date("H:i:s", strtotime("$hour2:$minute2"));
 
 	$conn = mysqli_connect("localhost", "root", "", "restaurant");
 
@@ -20,12 +31,12 @@ if (isset($_POST["submit"])) {
 	$now = date('Y-m-d H:i:s');
 	$tableNumber = mysqli_real_escape_string($conn, $_POST["tableNumber"]);
 
-	if (empty($reservedate) || empty($phone) || empty($email) || empty($reservedate) || empty($forwho) || empty($pepolenumber)) 
+	if (empty($reservedate) || empty($phone) || empty($email) || empty($forwho) || empty($pepolenumber)) 
 	{
-		echo "<script>alert('You need to fill everything, except message!');</script>";
+		echo "<script>window.location.href='../index.php?error=empty';</script>";
 	}
 	elseif ($pepolenumber > 20) {
-		echo "Our biggest table can hosts 20 people. If you need more space, contact us and ask for event booking.";
+		echo "<script>window.location.href='../index.php?error=big';</script>";
 	}
 	else
 	{	
@@ -43,13 +54,34 @@ if (isset($_POST["submit"])) {
 				$userid = $userstuff["id"];
 			}
 
-			if ($now < $reservedate) {echo "<script>alert('Your date has already been passed.');</script>";}
+			if ($now > date_format($reservedate, "Y-m-d H:i:s")) {echo "<script>window.location.href='../index.php?error=wrongDate';</script>";}
 
 			else
 			{
-				$insertString = "INSERT INTO `reservations` (`id`, `forWho`, `reserve_date`, `reserve_date_end`, `tableNo`, `pepoleNo`, `message`, `progress`, `user_id`, `bookedat`, `table_id`) VALUES (NULL, '$forwho', '".date_format($reservedate, 'Y-m-d H:i:s')."', '".date_format($endReserve, 'Y-m-d H:i:s')."', '$tableNumber', '$pepolenumber', '$message', 'open', '$userid', '$bookedat', '$tableNumber')";
-				mysqli_query($conn, $insertString);
-				header("location: ../index.php");
+				if ($testDate2 > date_format($reservedate, 'H:i:s') && $testDate < date_format($reservedate, 'H:i:s')) {
+					$selectReservedTablesThenQuery = "SELECT reservations.table_id FROM reservations WHERE reservations.reserve_date <= '".date_format($reservedate, 'Y-m-d H:i:s')."' AND reserve_date_end >= '".date_format($endReserve, 'Y-m-d H:i:s')."'";
+					$reservedTablesThen = $db->getArray($selectReservedTablesThenQuery);
+					$reservedThen = array();
+
+					foreach ($reservedTablesThen as $tables) {
+						array_push($reservedThen, intval($tables["table_id"]));
+					}
+
+					if (!(in_array($tableNumber, $reservedThen))) {
+						$insertString = "INSERT INTO `reservations` (`id`, `forWho`, `reserve_date`, `reserve_date_end`, `pepoleNo`, `message`, `progress`, `user_id`, `bookedat`, `table_id`) VALUES (NULL, '$forwho', '".date_format($reservedate, 'Y-m-d H:i:s')."', '".$endReserve."', '$pepolenumber', '$message', 'open', '$userid', '$bookedat', '$tableNumber')";var_dump($insertString);
+						#mysqli_query($conn, $insertString);
+						#header("location: ../index.php?success=thankyou");
+					}
+					else
+					{
+						echo "<script>window.location.href='../index.php?error=reserved';</script>";
+					}
+				}
+
+				else
+				{
+					echo "<script>window.location.href='../index.php?error=closed';</script>";
+				}
 			}
 
 		}

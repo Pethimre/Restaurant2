@@ -36,6 +36,10 @@
         if (isset($_GET["success"])) {
             $success = $db->escape($_GET["success"]);
         }
+
+        if (isset($_GET["error"])) {
+            $error = $db->escape($_GET["error"]);
+        }
     }
 
 ?>
@@ -132,7 +136,7 @@
               Swal.fire({
                 type: 'error',
                 title: 'Oops...',
-                text: '<b>'+ errortext + "!</b>",
+                text: errortext + "!",
                 footer: "If you need help, contact us <a href='../index.php' style='color:black;text-decoration:none;'> <i class='fas fa-arrow-right'></i></a>."
             })
           }
@@ -140,7 +144,7 @@
           {
               Swal.fire(
                 'Ok!',
-                '<b>' + oktext + '!</b>',
+                 oktext + '!',
                 'success'
                 )
           }
@@ -148,9 +152,36 @@
     </head>
     <body data-spy="scroll" data-target="#template-navbar">
         <?php 
+
+            switch ($error) {
+                case 'empty':
+                    echo "<script>oktext = 'All gaps must be filled.'; errormsg(oktext);</script>";
+                    break;
+
+                case 'big':
+                    echo "<script>oktext = 'Our biggest table can hosts 20 people. If you need more space, contact us and ask for event booking.'; errormsg(oktext);</script>";
+                    break;
+
+                case 'wrongDate':
+                    echo "<script>oktext = 'Invalid date entered.'; errormsg(oktext);</script>";
+                    break;
+
+                case 'reserved':
+                    echo "<script>oktext = 'Sorry,but this table has already been reserved to this interval.'; errormsg(oktext);</script>";
+                    break;
+
+                case 'closed':
+                    echo "<script>oktext = 'Sorry,but we are not opened on that interval.'; errormsg(oktext);</script>";
+                    break;
+
+                default:
+                    # code...
+                    break;
+            }
             if ($success == "thankyou") {
                 echo "<script>oktext = 'Thank you for choosing us'; okmsg(oktext);</script>";
             }
+
          ?>
         <!--== 4. Navigation ==-->
         <nav id="template-navbar" class="navbar navbar-default custom-navbar-default navbar-fixed-top">
@@ -729,25 +760,6 @@
                       confirmButtonText:
                       'Understood!',
                       confirmButtonAriaLabel: '',
-                  })
-                }
-
-               function okmsg()
-               {
-                Swal.fire(
-                  'Ok!',
-                  'Contact sent!',
-                  'success'
-                  )
-                }
-
-                function errorMsg()
-                {
-                    Swal.fire({
-                      type: 'error',
-                      title: 'Oops...',
-                      text: 'Every gap must be filled!',
-                      footer: ''
                   })
                 }
 
