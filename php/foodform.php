@@ -31,7 +31,7 @@
         }
 
         if ($roleid == 2) {
-            $selectCartForUserQuery = "SELECT * FROM cart WHERE user_id = ".$userid;
+            $selectCartForUserQuery = "SELECT * FROM cart WHERE status = 'cart' AND user_id = ".$userid;
             $cart = $db->getArray($selectCartForUserQuery);
         }
     }

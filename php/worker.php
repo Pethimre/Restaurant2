@@ -149,8 +149,8 @@ if (isset($success) && $success == "donePw") {
 
       <div class="collapse navbar-collapse" id="Food-fair-toggle">
         <ul class="nav navbar-nav navbar-right">
-          <li><a href="../index.php">Main Page</a></li>
-          <li><a href="#" id="modify">Modify Profile</a></li>
+          <li><a href="../index.php"><i class="fal fa-chevron-left"></i><i class="fal fa-chevron-left"></i>Main Page</a></li>
+          <li><a href="#" id="modify"><i class="fal fa-address-card"></i>Modify Profile</a></li>
           <li><a href="logout.php" title="Log Out"><i class="fal fa-sign-out-alt"></i> Logout</a></li>
         </ul>
       </div><!-- /.navbar-collapse -->

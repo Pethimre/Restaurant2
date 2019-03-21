@@ -18,7 +18,7 @@ session_start();
                     $coverpic = $user["coverpic"];
                     $userid = $user["id"];
                 }
-                $countCartQuery = "SELECT * FROM cart WHERE user_id =".$userid;
+                $countCartQuery = "SELECT * FROM cart WHERE user_id =".$userid." AND status = 'cart'";
                 $countCart = $db->numrows($countCartQuery);
 
                 if ($countCart == 0) {
@@ -125,7 +125,7 @@ session_start();
                     <h3 class="jumbotrontext"><?php echo $_SESSION["username"]."'s shopping cart"; ?></h3>
                 </div>
                 <?php 
-                $selectCartForUserQuery = "SELECT cart.*, foods.name FROM cart LEFT JOIN foods ON cart.food_id = foods.id WHERE cart.user_id = ".$userid;
+                $selectCartForUserQuery = "SELECT cart.*, foods.name FROM cart LEFT JOIN foods ON cart.food_id = foods.id WHERE cart.status = 'cart' AND cart.user_id = ".$userid;
                 $cart = $db->getArray($selectCartForUserQuery);
                 $cancer = 0;
                 $orderList = "";
@@ -173,7 +173,7 @@ session_start();
                 
             $insertOrder = $db->query($insertOrderQuery);
 
-            $resetCartQuery = "DELETE FROM cart WHERE user_id = ".$userid;
+            $resetCartQuery = "UPDATE `cart` SET `status` = 'order ' WHERE `cart`.`user_id` = ".$userid;
             $resetCart = $db->query($resetCartQuery);
             echo "<script>window.location.href='../index.php?success=thankyou'</script>";
         }

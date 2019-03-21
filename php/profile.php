@@ -95,7 +95,7 @@ $db = db::get();
       Swal.fire({
         type: 'error',
         title: 'Oops...',
-        text: errortext + "!",
+        text: '<b>' + errortext + "!</b>",
         footer: "If you need help, contact us <a href='../index.php' style='color:black;text-decoration:none;'> <i class='fas fa-arrow-right'></i></a>."
       })
     }
@@ -104,7 +104,7 @@ $db = db::get();
     {
       Swal.fire(
         'Ok!',
-        oktext + '!',
+        '<b>' + oktext + '!</b>',
         'success'
         )
     }
@@ -203,7 +203,7 @@ $db = db::get();
 
     <div class="collapse navbar-collapse" id="Food-fair-toggle">
       <ul class="nav navbar-nav navbar-right">
-        <li><a href="../index.php"><i class="fal fa-chevron-left"></i> Main Page</a></li>
+        <li><a href="../index.php"><i class="fal fa-chevron-left"></i><i class="fal fa-chevron-left"></i> Main Page</a></li>
         <li><a href="#" id="reviewOrders"><i class="fal fa-shopping-cart"></i> Review Orders</a></li>
         <li><a href="#" id="modify"><i class="fal fa-address-card"></i> Modify Profile</a></li>
         <li><a href="#" id="contact"><i class="fal fa-file-signature"></i> Contact Us</a></li>
@@ -280,7 +280,7 @@ $db = db::get();
       $selectReservations = "SELECT * FROM reservations WHERE user_id = '".$user['id']."' ";
       $allreservations = $db->getArray($selectReservations);
 
-      $selectCartItems = "SELECT cart.*, foods.name FROM cart LEFT JOIN foods ON cart.food_id = foods.id WHERE cart.user_id = ".$user['id'];
+      $selectCartItems = "SELECT cart.*, foods.name FROM cart LEFT JOIN foods ON cart.food_id = foods.id WHERE status = 'cart' AND cart.user_id = ".$user['id'];
       $cartContent = $db->getArray($selectCartItems);
 
       $selectOrders = "SELECT * FROM orders WHERE user_id = '" .$user["id"]."'";

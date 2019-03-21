@@ -30,8 +30,12 @@
                             $userid = (int)$user["id"];
                         }
                     }
-        $selectCartForUserQuery = "SELECT * FROM cart WHERE user_id = ".$userid;
+        $selectCartForUserQuery = "SELECT * FROM cart WHERE status = 'cart' AND user_id = ".$userid;
         $cart = $db->getArray($selectCartForUserQuery);
+
+        if (isset($_GET["success"])) {
+            $success = $db->escape($_GET["success"]);
+        }
     }
 
 ?>
@@ -122,8 +126,32 @@
             border: none;
         }
         </style>
+        <script>
+            function errormsg(errortext)
+            {
+              Swal.fire({
+                type: 'error',
+                title: 'Oops...',
+                text: '<b>'+ errortext + "!</b>",
+                footer: "If you need help, contact us <a href='../index.php' style='color:black;text-decoration:none;'> <i class='fas fa-arrow-right'></i></a>."
+            })
+          }
+          function okmsg(oktext)
+          {
+              Swal.fire(
+                'Ok!',
+                '<b>' + oktext + '!</b>',
+                'success'
+                )
+          }
+      </script>
     </head>
     <body data-spy="scroll" data-target="#template-navbar">
+        <?php 
+            if ($success == "thankyou") {
+                echo "<script>oktext = 'Thank you for choosing us'; okmsg(oktext);</script>";
+            }
+         ?>
         <!--== 4. Navigation ==-->
         <nav id="template-navbar" class="navbar navbar-default custom-navbar-default navbar-fixed-top">
             <div class="container">
