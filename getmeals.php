@@ -9,8 +9,19 @@ require_once "paginator.php";
 
 $currentPage = $_GET["page"];
 $currentPage = (int)$currentPage;
-$selectfoods2 = "SELECT * FROM foods WHERE class = 'webshop'";
+$selectfoods2 = "SELECT * FROM foods WHERE class = 'webshop' OR class = 'both'";
 $numberOfRows = $db->numrows($selectfoods2);
+
+$selectusername = "SELECT `role_id` FROM `users` WHERE username ='".$_SESSION["username"]."'";
+$getuserdata = $db->getArray($selectusername);
+
+    if (count($getuserdata) > 0)
+        {
+        	foreach ($getuserdata as $user) 
+        	{
+        		$roleid = (int)$user["role_id"];
+        	}
+        }
 
 $pg = new Paginator($numberOfRows, $currentPage);
 			if ($currentPage < 2) {
@@ -39,7 +50,7 @@ $foods = $db->getArray($selectfoods2." LIMIT ".$pg->from.", ".$pg->step);
 						<input type="button" class="btn btn-danger" name="removeWebshop" style="margin-left: 10%;" onclick="window.location.href='php/delete.php?foodid=<?php echo $food['id'];?>'" value="Remove"><br>
 					<?php endif; ?>
 
-					<?php if(isset($_SESSION["username"]) && $_SESSION["username"] != "admin") : ?>
+					<?php if(isset($_SESSION["username"]) && $roleid == 2) : ?>
 						<form action="php/addtocart.php?item=<?php echo $food["id"]; ?>" method="post">
 							<input type="submit" class="btn btn-success" value="Add to Cart">
 							<input type="number" min="1" max="99" name="foodQuantity" value="1">

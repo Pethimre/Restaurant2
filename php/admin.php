@@ -71,7 +71,6 @@ session_start();
    <link rel="shortcut icon" href="../images/favicon.ico" type="image/x-icon"/>
    <link rel="stylesheet" href="../css/sweetalert2.min.css">
    <script src="../js/sweetalert2.all.min.js"></script>
-   <script src="../js/wtf.js"></script>
    <script type="text/javascript">
     $(window).load(function() {
       $('.flexslider').flexslider({
@@ -130,6 +129,13 @@ select
 {
   -webkit-appearance: none;
   appearance: none;
+}
+
+.invTableItem
+{
+  text-decoration: none;
+  border: none;
+  background: transparent;
 }
 
 </style>
@@ -201,6 +207,7 @@ select
         <select name="class" class="form-control registry">
           <option value="restaurant">Restaurant meal</option>
           <option value="webshop">Webshop item</option>
+          <option value="both">Both</option>
         </select>
         <textarea class="registry form-control" rows="3" placeholder="Description for the food" name="food_desc" onfocus="this.style.color='rgba(66,58,58,1)';this."></textarea>
         <input type="button" class="btn btn-primary form-control" data-toggle="modal" data-target="#exampleModal" style="background-color: rgba(51,122,183, .49)" value="Add Nutrients Table">
@@ -276,7 +283,7 @@ select
   </div>
 
 <div id="invertoryPanel">
-  <?php $selectAllItem = "SELECT * FROM wrappers"; $allitem = $db->getArray($selectAllItem); ?>
+  <?php $selectAllItem = "SELECT * FROM wrappers ORDER BY wrappername"; $allitem = $db->getArray($selectAllItem); ?>
   <?php if(count($allitem) == 0): ?>
     <div class="text-center" data-toggle="modal" data-target="#exampleModal" style="background-color: rgba(255,255,255,.5); border-radius: 15px;"><h3> No Items on list. <br> <i class="fal fa-plus-circle"></i> New Item</h3></div>
   <?php endif; ?>
@@ -363,7 +370,7 @@ select
 
 <div id="modifyReserve" id="reserveList">
   <?php if(count($allreservations) == 0): ?>
-    <div class="container text-center" style="background-color: rgba(255,255,255,.5);"><h3> No Reservations Yet. </h3></div>
+    <div class="text-center" style="background-color: rgba(255,255,255,.5); height: 5vh; border-radius: 15px;"><h3 style="padding-top: 5px; padding-bottom: 5px;"> No Reservations Yet. </h3></div>
   <?php endif; ?>
   <?php if(count($allreservations) > 0): ?>
 
@@ -371,9 +378,9 @@ select
       <thead>
         <tr>
           <th scope="col">Reservation ID:</th>
-          <th scope="col">Ordered At</th>
+          <th scope="col">Booked At</th>
           <th scope="col">Status</th>
-          <th scope="col">Reserved By</th>
+          <th scope="col">Reserved For</th>
           <th scope="col">Review</th>
         </tr>
       </thead>
@@ -469,7 +476,7 @@ $allReviews = $db->getArray($selectReviews);
         <textarea class="form-control registry" name="revmessage" id="revmessage" rows="5" required></textarea>
       </div>
     </div>
-    <button type="submit" class="btn btn-success" name="addrev">Add Review</button>
+    <button type="submit" class="btn btn-success" name="addrev"><i class="fal fa-plus"></i> Add Review</button>
   </form>
 </div> 
 
@@ -490,7 +497,7 @@ $allReviews = $db->getArray($selectReviews);
         <option value="">Select Rule</option>
         <?php if(count($allrole) > 0): ?>
           <?php foreach($allrole as $role): ?>
-            <?php if($role["role"] != "admin"): ?>
+            <?php if($role["role"] != "admin" && $role["role"] != "user"): ?>
               <option value="<?php echo $role['id']; ?>" title="<?php echo $role['description']; ?>"><?php echo $role["role"]; ?></option>
             <?php endif; ?>
           <?php endforeach; ?>
@@ -580,12 +587,13 @@ $allReviews = $db->getArray($selectReviews);
                    </tr> 
                    <tr>
                      <th>Username:</th>
-                     <td><input name="workerusername" type="text" value="" id="workerusername" name="workerusername"></td>
+                     <td id="workerusername"></td>
                    </tr>                                                                                 
                     <tr>
                       <th>Active Role:</th>
                      <td>
                        <select name="selectrole" id="workroles">
+                        <option value="">New Role..</option>
                          <?php foreach($allrole as $role): ?>
                             <?php if($role["role"] != "admin"): ?>
                               <option value="<?php echo $role['id']; ?>"><?php echo $role["role"]; ?></option>
@@ -1093,7 +1101,7 @@ $("#modifyInv").click(function(e) {
       $('#worker-detail').hide();
       $('#worker-detail').show();
       $('#workid').val(data.id);
-      $('#workerusername').val(data.username);
+      $('#workerusername').html(data.username);
       $('#workerole').html(data.role);
       $('#role_id').val(data.role_id);     
 
@@ -1224,9 +1232,9 @@ $("#modifyInv").click(function(e) {
     var workerusername = $('#workerusername').val();
     var roleid = $('#role_id').val();
 
-    if(workerusername == "" || roleid == "")
+    if(roleid == "")
     {
-      alert("All gaps must be filled");
+      alert("If you dont change role, use cancel to go back.");
     }
 
     else

@@ -30,8 +30,12 @@
                             $userid = (int)$user["id"];
                         }
                     }
-        $selectCartForUserQuery = "SELECT * FROM cart WHERE user_id = ".$userid;
+        $selectCartForUserQuery = "SELECT * FROM cart WHERE status = 'cart' AND user_id = ".$userid;
         $cart = $db->getArray($selectCartForUserQuery);
+
+        if (isset($_GET["success"])) {
+            $success = $db->escape($_GET["success"]);
+        }
     }
 
     if (isset($_GET["success"])) {
@@ -132,20 +136,34 @@
               Swal.fire({
                 type: 'error',
                 title: 'Oops...',
+<<<<<<< HEAD
                 text: errortext + "!",
                 footer: "If you need help, contact us <a href='../index.php' style='color:black;text-decoration:none;'> <i class='fas fa-arrow-right'></i></a>."
             })
           }
 
+=======
+                text: '<b>'+ errortext + "!</b>",
+                footer: "If you need help, contact us <a href='../index.php' style='color:black;text-decoration:none;'> <i class='fas fa-arrow-right'></i></a>."
+            })
+          }
+>>>>>>> Expiremental
           function okmsg(oktext)
           {
               Swal.fire(
                 'Ok!',
+<<<<<<< HEAD
                 oktext + '!',
                 'success'
                 )
           }
 
+=======
+                '<b>' + oktext + '!</b>',
+                'success'
+                )
+          }
+>>>>>>> Expiremental
       </script>
     </head>
     <body data-spy="scroll" data-target="#template-navbar">
@@ -536,7 +554,7 @@
             </div> <!-- /.wrapper -->
         </section> <!-- /#reserve -->
 
-
+        <?php $nowKek = date("Y-m-d H:i:s"); ?>
 
         <section class="reservation">
             <img class="img-responsive section-icon hidden-sm hidden-xs" src="images/icons/reserve_color.png">
@@ -571,6 +589,7 @@
 
                                         <div class="col-md-6 col-sm-6">
                                             <div class="form-group">
+<<<<<<< HEAD
                                                 <input type="datetime-local" class="form-control reserve-form empty iconified" name="reserve_date" id="datepicker" required="required" placeholder="&#xf017;  Time">
                                             </div>
                                         </div> 
@@ -579,6 +598,16 @@
                                                 <input type="number" min="1" max="20" class="form-control reserve-form empty iconified" name="tableNumber" id="tableNumber" required="required" placeholder=" &#xf0c0;  Select Table">
                                             </div>
                                         </div> 
+=======
+                                                <input type="datetime-local" class="form-control reserve-form empty iconified" name="reserve_date" id="datepicker" required="required" placeholder="&#xf017;  Time" min="">
+                                            </div>
+                                        </div> 
+                                        <div class="col-md-6 col-sm-6">
+                                            <div class="form-group">
+                                                <input type="number" min="1" max="20" class="form-control reserve-form empty iconified" name="tableNumber" id="tableNumber" required="required" placeholder=" &#xf0c0;  Select Table">
+                                            </div>
+                                        </div> 
+>>>>>>> Expiremental
 
                                         <div class="col-md-12 col-sm-12">
                                             <button type="submit" id="submit" name="submit" class="btn btn-reservation">

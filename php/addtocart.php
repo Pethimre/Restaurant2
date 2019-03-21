@@ -33,7 +33,7 @@
 
 		$subTotal = $foodPrice * $quantity;
 
-		$addToChartQuery = "INSERT INTO `cart` (`id`, `food_id`, `user_id`, `quantity`, `subtotal`) VALUES (NULL, '".$itemId."', '".$user."', '".$quantity."', '".$subTotal."')";
+		$addToChartQuery = "INSERT INTO `cart` (`id`, `food_id`, `user_id`, `quantity`, `subtotal`, `status`) VALUES (NULL, '".$itemId."', '".$user."', '".$quantity."', '".$subTotal."', 'cart')";
 		$db->query($addToChartQuery);
 		#echo "<script>window.location.href='../index.php'</script>";
 		header('Location: ' . $_SERVER['HTTP_REFERER']);

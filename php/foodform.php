@@ -18,6 +18,23 @@
     }else{
         header("Location: ../index.php");
     }
+
+    $selectusername = "SELECT `role_id`, `id` FROM `users` WHERE username ='".$_SESSION["username"]."'";
+    $getuserdata = $db->getArray($selectusername);
+
+    if (count($getuserdata) > 0)
+    {
+        foreach ($getuserdata as $user) 
+        {
+            $roleid = (int)$user["role_id"];
+            $userid = (int)$user["id"];
+        }
+
+        if ($roleid == 2) {
+            $selectCartForUserQuery = "SELECT * FROM cart WHERE status = 'cart' AND user_id = ".$userid;
+            $cart = $db->getArray($selectCartForUserQuery);
+        }
+    }
 ?>
 
 <!DOCTYPE html>
@@ -81,6 +98,9 @@
                         <li title="Back to the main page"><a href="../index.php"><i class="fas fa-long-arrow-alt-left"></i> back</a></li>
                         <?php     if (!isset($_SESSION["username"])) { echo "<li><a href='../register.php'>LOG IN/SIGNUP</a></li>"; } ?>
                         <?php     if (isset($_SESSION["username"]) && !($_SESSION["username"] == "admin")) { echo "<li><a href='profile.php' >PROFILE</a></li>"; } ?>
+                        <?php if(isset($_SESSION["username"]) && count($cart) > 0): ?>
+                            <li style="color: white;"><a href="cart.php"><i class="far fa-shopping-cart"></i><?php echo count($cart); ?></a></li>
+                        <?php endif; ?>
                         <?php     if (isset($_SESSION["username"])) { echo "<li><a href='logout.php'>Log out</a></li>"; 
                                     if($_SESSION["username"] == "admin"){echo "<li><a href='admin.php'>Admin Page</a></li>";}} ?>
                     </ul>
@@ -118,14 +138,14 @@
                                     <input type="button" class="btn btn-danger" onclick="window.location.href='delete.php?foodid=<?php echo $food['id'];?>'" value="Remove">
                                 <?php endif; ?>
 
-                                <?php if(isset($_SESSION["username"]) && $_SESSION["username"] != "admin" && $food["class"] == "webshop") : ?>
+                                <?php if(isset($_SESSION["username"]) && $roleid == 2 && $food["class"] == "webshop") : ?>
                                     <form action="addtocart.php?item=<?php echo $food["id"]; ?>" method="post">
                                         <input type="submit" class="btn btn-success" value="Add to Cart">
                                         <input type="number" min="1" max="99" name="foodQuantity" value="1">
                                     </form>
                                 <?php endif; ?>
 
-                                <?php if(!(isset($_SESSION["username"]))): ?>
+                                <?php if(!(isset($_SESSION["username"])) && $food["class"] == "webshop"): ?>
                                     <input type="button" class="btn btn-primary" onclick="window.location.href='register.php'" value="Login for Shopping">
                                 <?php endif; ?>
                             </div>
