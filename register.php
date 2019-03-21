@@ -37,8 +37,8 @@
 </head>
 <body class="bg">
 
-<div class="form" style="margin-top: 3%; border-radius: 15px; background-color: rgba(185,183,183,.3);">
-      <div style="filter: blur(13px);"></div>
+<div class="form" style="margin-top: 3%; border-radius: 15px;">
+      
       <ul class="tab-group">
         <li class="tab active"><a href="#signup">Sign Up</a></li>
         <li class="tab"><a href="#login">Log In</a></li>
@@ -150,6 +150,7 @@
           </form>
 
         </div>
+        
       </div><!-- tab-content -->
       
 </div> <!-- /form -->

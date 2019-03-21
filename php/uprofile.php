@@ -27,12 +27,13 @@ if (isset($_POST["uploadProfile"])) {
     $imgname = $profilePicture;
   }
 
-  if ($imgname != $profilePicture && $profilePicture != null) {
+  if ($imgname != $profilePicture) {
     $path = "../images/profiles/".$_SESSION["username"]."/".$profilePicture;
     chown($path,0777);
     unlink($path);
   }
   
+
 // Check if image file is a actual image or fake image
   if(isset($_POST["uploadProfile"])) {
     $check = getimagesize($_FILES["fileToUpload"]["tmp_name"]);

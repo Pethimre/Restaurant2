@@ -38,10 +38,6 @@
         }
     }
 
-    if (isset($_GET["success"])) {
-        $success = $db->escape($_GET["success"]);
-    }
-
 ?>
 
 <!DOCTYPE html>
@@ -136,34 +132,18 @@
               Swal.fire({
                 type: 'error',
                 title: 'Oops...',
-<<<<<<< HEAD
-                text: errortext + "!",
-                footer: "If you need help, contact us <a href='../index.php' style='color:black;text-decoration:none;'> <i class='fas fa-arrow-right'></i></a>."
-            })
-          }
-
-=======
                 text: '<b>'+ errortext + "!</b>",
                 footer: "If you need help, contact us <a href='../index.php' style='color:black;text-decoration:none;'> <i class='fas fa-arrow-right'></i></a>."
             })
           }
->>>>>>> Expiremental
           function okmsg(oktext)
           {
               Swal.fire(
                 'Ok!',
-<<<<<<< HEAD
-                oktext + '!',
-                'success'
-                )
-          }
-
-=======
                 '<b>' + oktext + '!</b>',
                 'success'
                 )
           }
->>>>>>> Expiremental
       </script>
     </head>
     <body data-spy="scroll" data-target="#template-navbar">
@@ -589,16 +569,6 @@
 
                                         <div class="col-md-6 col-sm-6">
                                             <div class="form-group">
-<<<<<<< HEAD
-                                                <input type="datetime-local" class="form-control reserve-form empty iconified" name="reserve_date" id="datepicker" required="required" placeholder="&#xf017;  Time">
-                                            </div>
-                                        </div> 
-                                        <div class="col-md-6 col-sm-6">
-                                            <div class="form-group">
-                                                <input type="number" min="1" max="20" class="form-control reserve-form empty iconified" name="tableNumber" id="tableNumber" required="required" placeholder=" &#xf0c0;  Select Table">
-                                            </div>
-                                        </div> 
-=======
                                                 <input type="datetime-local" class="form-control reserve-form empty iconified" name="reserve_date" id="datepicker" required="required" placeholder="&#xf017;  Time" min="">
                                             </div>
                                         </div> 
@@ -607,7 +577,6 @@
                                                 <input type="number" min="1" max="20" class="form-control reserve-form empty iconified" name="tableNumber" id="tableNumber" required="required" placeholder=" &#xf0c0;  Select Table">
                                             </div>
                                         </div> 
->>>>>>> Expiremental
 
                                         <div class="col-md-12 col-sm-12">
                                             <button type="submit" id="submit" name="submit" class="btn btn-reservation">
