@@ -244,9 +244,9 @@ if (isset($success) && $success == "donePw") {
           <div class="modal-content">                  
            <div class="modal-header"> 
              <button type="button" class="close" data-dismiss="modal" aria-hidden="true"><i class="far fa-times-circle"></i></button> 
-             <h4 class="modal-title">
+             <h3 class="modal-title">
                Reservation Details
-             </h4> 
+             </h3> 
            </div>          
            <div class="modal-body">                   
              <div id="employee-detail">                                        
@@ -273,8 +273,12 @@ if (isset($success) && $success == "donePw") {
                          </tr>   
                          <tr>
                            <th>Reserved To:</th>
-                           <td id=""><input type="date" value="" id="reservedate" name="reservedate"></td>
-                         </tr>                                         
+                           <td id=""><input type="datetime-local" value="" id="reservedate" name="reservedate"></td>
+                         </tr>      
+                         <tr>
+                           <th>Expire reservation:</th>
+                           <td id=""><input type="datetime-local" value="" id="expire" name="expire"></td>
+                         </tr>                                    
                          <tr>
                            <th>People Number</th>
                            <td id=""><input type="number" id="pepoleNo" value="" name="pepoleNo"></td>
@@ -341,11 +345,12 @@ if (isset($success) && $success == "donePw") {
     {
       var forwho = $('#forwho').val();
       var reservedate = $('#reservedate').val();
+      var expire = $('#expire').val();
       var pepoleno = $('#pepoleNo').val();
       var message = $('#message').val();
       var progress = $('#progress').val();
 
-      if(forwho == "" || reservedate == "" || pepoleno == "" || message == "" || progress == "")
+      if(forwho == "" || reservedate == "" || expire == "" || pepoleno == "" || message == "" || progress == "")
       {
         alert("All gaps must be filled!");
       }
@@ -354,6 +359,7 @@ if (isset($success) && $success == "donePw") {
       {
         document.cookie = "forwho=" + forwho;
         document.cookie = "reservedate=" + reservedate;
+        document.cookie = "expire=" + expire;
         document.cookie = "pepoleno=" + pepoleno;
         document.cookie = "message=" + message;
         document.cookie = "progress=" + progress;
@@ -381,6 +387,7 @@ if (isset($success) && $success == "donePw") {
         $('#progress').val(data.progress);
         $('#bookedat').val(data.bookedat);      
         $('#reservedate').val(data.reserve_date);      
+        $('#expire').val(data.reserve_date_end);      
         $('#pepoleNo').val(data.pepoleNo);      
         $('#message').val(data.message);
 
