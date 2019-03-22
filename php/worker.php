@@ -272,14 +272,18 @@ if (isset($success) && $success == "donePw") {
                            <td id=""><input type="date" value="" id="bookedat" name="bookedat" readonly="true"></td>
                          </tr>   
                          <tr>
-                           <th>Reserved To:</th>
-                           <td id=""><input type="datetime-local" value="" id="reservedate" name="reservedate"></td>
-                         </tr>      
-                         <tr>
-                           <th>Expire reservation:</th>
-                           <td id=""><input type="datetime-local" value="" id="expire" name="expire"></td>
-                         </tr>                                    
-                         <tr>
+                           <th>Reserved To: <div id="reservedate"></div></th>
+                           <td>
+                            <input type="datetime-local" value="" id="newReservedate" name="newReservedate">
+                          </td>
+                        </tr>  
+                        <tr>
+                         <th>Reservation Expires: <div id="expire"></div></th>
+                         <td>
+                          <input type="datetime-local" value="" id="newExpire" name="newExpire">
+                        </td>
+                      </tr>                                   
+                      <tr>
                            <th>People Number</th>
                            <td id=""><input type="number" id="pepoleNo" value="" name="pepoleNo"></td>
                          </tr> 
@@ -344,18 +348,13 @@ if (isset($success) && $success == "donePw") {
     function validateModal()
     {
       var forwho = $('#forwho').val();
-      var reservedate = $('#reservedate').val();
-      var expire = $('#expire').val();
+      var reservedate = $('#newReservedate').val();
+      var expire = $('#newExpire').val();
       var pepoleno = $('#pepoleNo').val();
       var message = $('#message').val();
       var progress = $('#progress').val();
 
-      if(forwho == "" || reservedate == "" || expire == "" || pepoleno == "" || message == "" || progress == "")
-      {
-        alert("All gaps must be filled!");
-      }
-
-      else
+      if(forwho != "" || pepoleno != "" || message != "" || progress != "")
       {
         document.cookie = "forwho=" + forwho;
         document.cookie = "reservedate=" + reservedate;
@@ -364,6 +363,11 @@ if (isset($success) && $success == "donePw") {
         document.cookie = "message=" + message;
         document.cookie = "progress=" + progress;
         redirect();
+      }
+
+      else
+      {
+        alert("All gaps must be filled in order to update reservation.");
       }
     }
 
@@ -386,8 +390,8 @@ if (isset($success) && $success == "donePw") {
         $('#forwho').val(data.forWho);
         $('#progress').val(data.progress);
         $('#bookedat').val(data.bookedat);      
-        $('#reservedate').val(data.reserve_date);      
-        $('#expire').val(data.reserve_date_end);      
+        $('#reservedate').html(data.reserve_date);      
+        $('#expire').html(data.reserve_date_end);      
         $('#pepoleNo').val(data.pepoleNo);      
         $('#message').val(data.message);
 

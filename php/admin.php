@@ -25,6 +25,10 @@ session_start();
     $role = $roles["role_id"];
     $role = (int)$role;
 
+    if (isset($_GET["error"])) {
+      $error = $db->escape($_GET["error"]);
+    }
+
     switch ($role) {
         case 1:
          break;
@@ -78,11 +82,28 @@ session_start();
         controlsContainer: ".flexslider-container"
       });
     });
+    function errormsg(errortext)
+    {
+      Swal.fire({
+        type: 'error',
+        title: 'Oops...',
+        text: errortext + "!",
+        footer: "If you need help, contact us <a href='../index.php' style='color:black;text-decoration:none;'> <i class='fas fa-arrow-right'></i></a>."
+      })
+    }
+    function okmsg(oktext)
+    {
+      Swal.fire(
+        'Ok!',
+        oktext + '!',
+        'success'
+        )
+    }
   </script>
   <style>
   .bg 
   { 
-   background-image: url("../images/bg.jpg");
+   background-image: url("../images/bgvitya.jpg");
    background-repeat: no-repeat;
    background-size: cover;
  }
@@ -141,6 +162,11 @@ select
 </style>
 </head>
 <body class="bg info" data-spy="scroll" data-target="#template-navbar">
+  <?php 
+    if ($error == "closed") {
+      echo "<script>oktext = 'We are not opened on that interval.'; errormsg(oktext);</script>";
+    }
+   ?>
 	<nav id="template-navbar" class="navbar navbar-default custom-navbar-default navbar-fixed-top">
     <div class="container">
       <div class="navbar-header">
@@ -158,7 +184,7 @@ select
       <div class="collapse navbar-collapse" id="Food-fair-toggle">
         <ul class="nav navbar-nav navbar-right">
           <li><a href="../index.php"><i class="fal fa-chevron-left"></i> Main Page</a></li>
-          <li><a href="#"><i class="fal fa-shopping-cart"></i> Orders</a></li>
+          <li><a href="#" id="modifyOrdersButton"><i class="fal fa-shopping-cart"></i> Orders</a></li>
           <li><a href="#" id="manageWorker"><i class="fal fa-users"></i> Workers</a></li>
           <li><a href="#" id="modifyRes"><i class="fal fa-calendar-alt"></i> Reservations</a></li>
           <li><a href="#" id="modifyInv"><i class="fal fa-warehouse"></i> Invertory</a></li>
@@ -710,9 +736,17 @@ $allReviews = $db->getArray($selectReviews);
                      <td id=""><input type="date" value="" id="bookedat" name="bookedat" readonly="true"></td>
                    </tr>   
                    <tr>
-                     <th>Reserved To:</th>
-                     <td id=""><input type="date" value="" id="reservedate" name="reservedate"></td>
-                   </tr>                                         
+                     <th>Reserved To: <div id="reservedate"></div></th>
+                     <td>
+                        <input type="datetime-local" value="" id="newReservedate" name="newReservedate">
+                     </td>
+                   </tr>  
+                   <tr>
+                     <th>Reservation Expires: <div id="expire"></div></th>
+                     <td>
+                        <input type="datetime-local" value="" id="newExpire" name="newExpire">
+                      </td>
+                   </tr>                                 
                    <tr>
                      <th>People Number</th>
                      <td id=""><input type="number" id="pepoleNo" value="" name="pepoleNo"></td>
@@ -829,6 +863,7 @@ $allReviews = $db->getArray($selectReviews);
   $("#addfeaturedForm").hide();
   $("#invertoryPanel").hide();
   $("#modifyReserve").hide();
+  $("#modifyOrders").hide();
   $("#contactMenu").hide();
   $("#newWorkerPanel").hide();
   $("#reviewsPanel").hide();
@@ -850,6 +885,10 @@ $allReviews = $db->getArray($selectReviews);
 
     if($("#manageWorkerPanel").is(":visible")){
       $("#manageWorkerPanel").hide();
+    }
+
+    if($("#modifyOrders").is(":visible")){
+      $("#modifyOrders").hide();
     }
 
     if($("#modifyReserve").is(":visible")){
@@ -879,6 +918,10 @@ $allReviews = $db->getArray($selectReviews);
 
     if($("#modifyReserve").is(":visible")){
       $("#modifyReserve").hide();
+    }
+
+    if($("#modifyOrders").is(":visible")){
+      $("#modifyOrders").hide();
     }
 
     if($("#newWorkerPanel").is(":visible")){
@@ -932,6 +975,10 @@ $allReviews = $db->getArray($selectReviews);
       $("#invertoryPanel").hide();
     }
 
+    if($("#modifyOrders").is(":visible")){
+      $("#modifyOrders").hide();
+    }
+
   });
 
   $("#revContacts").click(function(e) {
@@ -960,6 +1007,10 @@ $allReviews = $db->getArray($selectReviews);
 
     if($("#invertoryPanel").is(":visible")){
       $("#invertoryPanel").hide();
+    }
+
+    if($("#modifyOrders").is(":visible")){
+      $("#modifyOrders").hide();
     }
 
   });
@@ -992,6 +1043,10 @@ $("#modifyInv").click(function(e) {
       $("#contactMenu").hide();
     }
 
+    if($("#modifyOrders").is(":visible")){
+      $("#modifyOrders").hide();
+    }
+
   });
 
   $("#manageWorker").click(function(e) {
@@ -1019,6 +1074,10 @@ $("#modifyInv").click(function(e) {
 
     if($("#invertoryPanel").is(":visible")){
       $("#invertoryPanel").hide();
+    }
+
+    if($("#modifyOrders").is(":visible")){
+      $("#modifyOrders").hide();
     }
 
   });
@@ -1049,6 +1108,42 @@ $("#modifyInv").click(function(e) {
     if($("#invertoryPanel").is(":visible")){
       $("#invertoryPanel").hide();
     }
+
+    if($("#modifyOrders").is(":visible")){
+      $("#modifyOrders").hide();
+    }
+  });
+
+  $("#modifyOrdersButton").click(function(e) {
+    e.preventDefault();
+    $("#modifyOrders").toggle();
+
+    if($("#contactMenu").is(":visible")){
+      $("#contactMenu").hide();
+    }
+    if($("#addfeaturedForm").is(":visible")){
+      $("#addfeaturedForm").hide();
+    }
+
+    if($("#manageWorkerPanel").is(":visible")){
+      $("#manageWorkerPanel").hide();
+    }
+
+    if($("#newWorkerPanel").is(":visible")){
+      $("#newWorkerPanel").hide();
+    }
+
+    if($("#reviewsPanel").is(":visible")){
+      $("#reviewsPanel").hide();
+    }
+
+    if($("#invertoryPanel").is(":visible")){
+      $("#invertoryPanel").hide();
+    }
+
+    if($("#modifyReserve").is(":visible")){
+      $("#modifyReserve").hide();
+    }
   });
 
   $(document).ready(function(){   
@@ -1070,7 +1165,8 @@ $("#modifyInv").click(function(e) {
       $('#forwho').val(data.forWho);
       $('#progress').val(data.progress);
       $('#bookedat').val(data.bookedat);      
-      $('#reservedate').val(data.reserve_date);      
+      $('#reservedate').html(data.reserve_date);      
+      $('#expire').html(data.reserve_date_end);      
       $('#pepoleNo').val(data.pepoleNo);      
       $('#message').val(data.message);
       
@@ -1147,25 +1243,6 @@ $("#modifyInv").click(function(e) {
 
   });
 
-  function okmsg()
-  {
-    Swal.fire(
-      'Ok!',
-      'Updated!',
-      'success'
-      )
-  }
-
-  function errorMsg()
-  {
-    Swal.fire({
-      type: 'error',
-      title: 'Oops...',
-      text: 'Every gap must be filled!',
-      footer: ''
-    })
-  }
-
   function redirect()
   {
     window.location.href = "editres.php"
@@ -1184,24 +1261,27 @@ $("#modifyInv").click(function(e) {
   function validateModal()
   {
     var forwho = $('#forwho').val();
-    var reservedate = $('#reservedate').val();
+    var reservedate = $('#newReservedate').val();
+    var expire = $('#newExpire').val();
     var pepoleno = $('#pepoleNo').val();
     var message = $('#message').val();
     var progress = $('#progress').val();
 
-    if(forwho == "" || reservedate == "" || pepoleno == "" || message == "" || progress == "")
+    if(forwho != "" || reservedate != "" || pepoleno != "" || expire != "" || message != "" || progress != "")
     {
-      alert("All gaps must be filled!");
-    }
-
-    else
-    {
+      //alert("All gaps must be filled!");
       document.cookie = "forwho=" + forwho;
       document.cookie = "reservedate=" + reservedate;
+      document.cookie = "expire=" + expire;
       document.cookie = "pepoleno=" + pepoleno;
       document.cookie = "message=" + message;
       document.cookie = "progress=" + progress;
       redirect();
+    }
+
+    else
+    {
+      alert("All gaps must be filled for update.");
     }
   }
 

@@ -68,9 +68,9 @@ if (isset($_POST["submit"])) {
 					}
 
 					if (!(in_array($tableNumber, $reservedThen))) {
-						$insertString = "INSERT INTO `reservations` (`id`, `forWho`, `reserve_date`, `reserve_date_end`, `pepoleNo`, `message`, `progress`, `user_id`, `bookedat`, `table_id`) VALUES (NULL, '$forwho', '".date_format($reservedate, 'Y-m-d H:i:s')."', '".$endReserve."', '$pepolenumber', '$message', 'open', '$userid', '$bookedat', '$tableNumber')";var_dump($insertString);
-						#mysqli_query($conn, $insertString);
-						#header("location: ../index.php?success=thankyou");
+						$insertString = "INSERT INTO `reservations` (`id`, `forWho`, `reserve_date`, `reserve_date_end`, `pepoleNo`, `message`, `progress`, `user_id`, `bookedat`, `table_id`) VALUES (NULL, '$forwho', '".date_format($reservedate, 'Y-m-d H:i:s')."', '".$endReserve."', '$pepolenumber', '$message', 'open', '$userid', '$bookedat', '$tableNumber')";
+						mysqli_query($conn, $insertString);
+						header("location: ../index.php?success=thankyou");
 					}
 					else
 					{
