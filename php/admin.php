@@ -29,145 +29,153 @@ session_start();
       $error = $db->escape($_GET["error"]);
     }
 
+    if (isset($_GET["success"])) {
+      $success = $db->escape($_GET["success"]);
+    }
+
     switch ($role) {
-        case 1:
-         break;
+      case 1:
+      break;
 
       case 2:
         header("location: ../index.php"); //user role
         break;
 
-      case 3:
+        case 3:
         header("location: worker.php"); //receotionist role
         break;
 
-      case 4:
+        case 4:
         header("location: worker2.php"); //courier role
         break;
 
-      case 5:
+        case 5:
         header("location: worker3.php"); //waiter role
         break;
-      
-      default:
+
+        default:
         header("location: ../index.php"); //in case of wtf
         break;
+      }
     }
-  }
-  else
-  {
-    header("location: ../index.php");
-  }
+    else
+    {
+      header("location: ../index.php");
+    }
 
-  $errors = array();
-  ?>
-  <!DOCTYPE html>
-  <html>
-  <head>
-   <title>Admin Page</title>
-   <meta charset="utf-8">
-   <meta name="viewport" content="width=device-width, initial-scale=1">
-   <link rel="stylesheet" type="text/css" href="../fontawesome/css/all.min.css">
-   <link rel="stylesheet" href="../css/bootstrap.min.css">
-   <link rel="stylesheet" href="../css/main.css">
-   <script src="../js/jquery-1.11.2.min.js"></script>
-   <link rel="stylesheet" type="text/css" href="../css/dragndrop.css">
-   <link rel="shortcut icon" href="../images/favicon.ico" type="image/x-icon"/>
-   <link rel="stylesheet" href="../css/sweetalert2.min.css">
-   <script src="../js/sweetalert2.all.min.js"></script>
-   <script type="text/javascript">
-    $(window).load(function() {
-      $('.flexslider').flexslider({
-        animation: "slide",
-        controlsContainer: ".flexslider-container"
+    $errors = array();
+    ?>
+    <!DOCTYPE html>
+    <html>
+    <head>
+     <title>Admin Page</title>
+     <meta charset="utf-8">
+     <meta name="viewport" content="width=device-width, initial-scale=1">
+     <link rel="stylesheet" type="text/css" href="../fontawesome/css/all.min.css">
+     <link rel="stylesheet" href="../css/bootstrap.min.css">
+     <link rel="stylesheet" href="../css/main.css">
+     <script src="../js/jquery-1.11.2.min.js"></script>
+     <link rel="stylesheet" type="text/css" href="../css/dragndrop.css">
+     <link rel="shortcut icon" href="../images/favicon.ico" type="image/x-icon"/>
+     <link rel="stylesheet" href="../css/sweetalert2.min.css">
+     <script src="../js/sweetalert2.all.min.js"></script>
+     <script type="text/javascript">
+      $(window).load(function() {
+        $('.flexslider').flexslider({
+          animation: "slide",
+          controlsContainer: ".flexslider-container"
+        });
       });
-    });
-    function errormsg(errortext)
-    {
-      Swal.fire({
-        type: 'error',
-        title: 'Oops...',
-        text: errortext + "!",
-        footer: "If you need help, contact us <a href='../index.php' style='color:black;text-decoration:none;'> <i class='fas fa-arrow-right'></i></a>."
-      })
+      function errormsg(errortext)
+      {
+        Swal.fire({
+          type: 'error',
+          title: 'Oops...',
+          text: errortext + "!",
+          footer: "If you need help, contact us <a href='../index.php' style='color:black;text-decoration:none;'> <i class='fas fa-arrow-right'></i></a>."
+        })
+      }
+      function okmsg(oktext)
+      {
+        Swal.fire(
+          'Ok!',
+          oktext + '!',
+          'success'
+          )
+      }
+    </script>
+    <style>
+      .bg 
+      { 
+       background-image: url("../images/bg.jpg");
+       background-repeat: no-repeat;
+       background-size: cover;
+     }
+     .registry
+     {
+      background-color: rgba(255,255,255,.74);
+      border-color: rgba(255,255,255,0.3);
+      height: 30px;
     }
-    function okmsg(oktext)
-    {
-      Swal.fire(
-        'Ok!',
-        oktext + '!',
-        'success'
-        )
+
+    ::-webkit-scrollbar {
+      width: 10px;
     }
-  </script>
-  <style>
-  .bg 
-  { 
-   background-image: url("../images/bgvitya.jpg");
-   background-repeat: no-repeat;
-   background-size: cover;
- }
- .registry
- {
-  background-color: rgba(255,255,255,.74);
-  border-color: rgba(255,255,255,0.3);
-  height: 30px;
-}
 
-::-webkit-scrollbar {
-  width: 10px;
-}
+    ::-webkit-scrollbar-track {
+      background: #ddd;
+    }
 
-::-webkit-scrollbar-track {
-  background: #ddd;
-}
+    ::-webkit-scrollbar-thumb {
+      background: #666;
+    }
 
-::-webkit-scrollbar-thumb {
-  background: #666;
-}
+    input::placeholder {
+      color: rgba(66,58,58,1)!important;
+    }
+    textarea::placeholder {
+      color: rgba(66,58,58,1)!important;
+    }
+    iframe
+    {
+      overflow: hidden;
+    }
 
-input::placeholder {
-  color: rgba(66,58,58,1)!important;
-}
-textarea::placeholder {
-  color: rgba(66,58,58,1)!important;
-}
-iframe
-{
-  overflow: hidden;
-}
+    .ui-select
+    {
+      width: 100%
+    }
+    select::-ms-expand 
+    {  
+      display: none; 
+    }
 
-.ui-select
-{
-  width: 100%
-}
-select::-ms-expand 
-{  
-  display: none; 
-}
+    select
+    {
+      -webkit-appearance: none;
+      appearance: none;
+    }
 
-select
-{
-  -webkit-appearance: none;
-  appearance: none;
-}
+    .invTableItem
+    {
+      text-decoration: none;
+      border: none;
+      background: transparent;
+    }
 
-.invTableItem
-{
-  text-decoration: none;
-  border: none;
-  background: transparent;
-}
-
-</style>
+  </style>
 </head>
 <body class="bg info" data-spy="scroll" data-target="#template-navbar">
   <?php 
-    if ($error == "closed") {
-      echo "<script>oktext = 'We are not opened on that interval.'; errormsg(oktext);</script>";
-    }
-   ?>
-	<nav id="template-navbar" class="navbar navbar-default custom-navbar-default navbar-fixed-top">
+  if ($error == "closed") {
+    echo "<script>oktext = 'We are not opened on that interval.'; errormsg(oktext);</script>";
+  }
+
+  if ($success == "done") {
+   echo "<script>oktext = 'Succesful modifications'; okmsg(oktext);</script>";
+ }
+  ?>
+  <nav id="template-navbar" class="navbar navbar-default custom-navbar-default navbar-fixed-top">
     <div class="container">
       <div class="navbar-header">
         <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#Food-fair-toggle">
@@ -185,7 +193,6 @@ select
         <ul class="nav navbar-nav navbar-right">
           <li><a href="../index.php"><i class="fal fa-chevron-left"></i> Main Page</a></li>
           <li><a href="#" id="modifyOrdersButton"><i class="fal fa-shopping-cart"></i> Orders</a></li>
-          <li><a href="#" id="manageWorker"><i class="fal fa-users"></i> Workers</a></li>
           <li><a href="#" id="modifyRes"><i class="fal fa-calendar-alt"></i> Reservations</a></li>
           <li><a href="#" id="modifyInv"><i class="fal fa-warehouse"></i> Invertory</a></li>
           <li><a href="#" id="revContacts" onclick="refreshContacts()"><i class="fal fa-comments"></i> Contacts</a></li>
@@ -199,6 +206,19 @@ select
                   <li><a href="#" id="addfbutton"><i class="fal fa-utensils"></i> new Food </a></li>
                   <li><a href="#" id="newWorker"><i class="fal fa-user-plus"></i> new Worker </a></li>
                   <li><a href="#" id="newReview"><i class="fal fa-file-edit"></i> Review </a></li>
+                </ul>
+              </li>
+            </ul>
+          </li>
+          <li>
+            <ul class="dropdownmenu">
+              <li class="button-dropdown">
+                <a href="javascript:void(0)" class="dropdown-toggle" style="background-color: #8bc34a;">
+                  <i class="fal fa-users"></i> Users <span>▼</span>
+                </a>
+                <ul class="dropdown-menu">
+                  <li><a href="#" id="manageWorker"><i class="fal fa-user-cog"></i> Workers</a></li>
+                  <li><a href="#" id="manageUsers"><i class="fal fa-users-cog"></i> Users </a></li>
                 </ul>
               </li>
             </ul>
@@ -255,58 +275,58 @@ select
     </div>
     <!-- MODAL -->
 
-<div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
-  <div class="modal-dialog" role="document">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h5 class="modal-title" id="exampleModalLabel">Add Nutrients<button type="button" class="close" data-dismiss="modal" aria-label="Close"><i class="far fa-times-circle"></i></button></h5>
-        
-      </div>
-      <div class="modal-body">
-        
-        <div class="form-group">
-          <label for="recipient-name" class="col-form-label">Protein:</label>
-          <input type="text" class="form-control" id="recipient-name" name="protein" value="<?php if(!(empty($protein))){echo $protein;} ?>">
+    <div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+      <div class="modal-dialog" role="document">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="exampleModalLabel">Add Nutrients<button type="button" class="close" data-dismiss="modal" aria-label="Close"><i class="far fa-times-circle"></i></button></h5>
+
+          </div>
+          <div class="modal-body">
+
+            <div class="form-group">
+              <label for="recipient-name" class="col-form-label">Protein:</label>
+              <input type="text" class="form-control" id="recipient-name" name="protein" value="<?php if(!(empty($protein))){echo $protein;} ?>">
+            </div>
+            <div class="form-group">
+              <label for="recipient-name" class="col-form-label">Carbohydrates:</label>
+              <input type="text" class="form-control" id="recipient-name" name="carb" value="<?php if(!(empty($carb))){echo $carb;} ?>">
+            </div>
+            <div class="form-group">
+              <label for="recipient-name" class="col-form-label">Sodium:</label>
+              <input type="text" class="form-control" id="recipient-name" name="sodium" value="<?php if(!(empty($sodium))){echo $sodium;} ?>">
+            </div>
+            <div class="form-group">
+              <label for="recipient-name" class="col-form-label">Fiber:</label>
+              <input type="text" class="form-control" id="recipient-name" name="fiber" value="<?php if(!(empty($fiber))){echo $fiber;} ?>">
+            </div>
+            <div class="form-group">
+              <label for="recipient-name" class="col-form-label">Fat:</label>
+              <input type="text" class="form-control" id="recipient-name" name="fat" value="<?php if(!(empty($fat))){echo $fat;} ?>">
+            </div>
+            <div class="form-group">
+              <label for="recipient-name" class="col-form-label">Saturated Fat:</label>
+              <input type="text" class="form-control" id="recipient-name" name="sat_fat" value="<?php if(!(empty($sat_fat))){echo $sat_fat;} ?>">
+            </div>
+            <div class="form-group">
+              <label for="recipient-name" class="col-form-label">Sugar:</label>
+              <input type="text" class="form-control" id="recipient-name" name="sugar" value="<?php if(!(empty($sugar))){echo $sugar;} ?>">
+            </div>
+            <div class="form-group">
+              <label for="recipient-name" class="col-form-label">Cholesterol:</label>
+              <input type="text" class="form-control" id="recipient-name" name="cholesterol" value="<?php if(!(empty($cholesterol))){echo $cholesterol;} ?>">
+            </div>
+
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+            <small>Data will be saved automatically.</small>
+          </div>
         </div>
-        <div class="form-group">
-          <label for="recipient-name" class="col-form-label">Carbohydrates:</label>
-          <input type="text" class="form-control" id="recipient-name" name="carb" value="<?php if(!(empty($carb))){echo $carb;} ?>">
-        </div>
-        <div class="form-group">
-          <label for="recipient-name" class="col-form-label">Sodium:</label>
-          <input type="text" class="form-control" id="recipient-name" name="sodium" value="<?php if(!(empty($sodium))){echo $sodium;} ?>">
-        </div>
-        <div class="form-group">
-          <label for="recipient-name" class="col-form-label">Fiber:</label>
-          <input type="text" class="form-control" id="recipient-name" name="fiber" value="<?php if(!(empty($fiber))){echo $fiber;} ?>">
-        </div>
-        <div class="form-group">
-          <label for="recipient-name" class="col-form-label">Fat:</label>
-          <input type="text" class="form-control" id="recipient-name" name="fat" value="<?php if(!(empty($fat))){echo $fat;} ?>">
-        </div>
-        <div class="form-group">
-          <label for="recipient-name" class="col-form-label">Saturated Fat:</label>
-          <input type="text" class="form-control" id="recipient-name" name="sat_fat" value="<?php if(!(empty($sat_fat))){echo $sat_fat;} ?>">
-        </div>
-        <div class="form-group">
-          <label for="recipient-name" class="col-form-label">Sugar:</label>
-          <input type="text" class="form-control" id="recipient-name" name="sugar" value="<?php if(!(empty($sugar))){echo $sugar;} ?>">
-        </div>
-        <div class="form-group">
-          <label for="recipient-name" class="col-form-label">Cholesterol:</label>
-          <input type="text" class="form-control" id="recipient-name" name="cholesterol" value="<?php if(!(empty($cholesterol))){echo $cholesterol;} ?>">
-        </div>
-        
-      </div>
-      <div class="modal-footer">
-        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-        <small>Data will be saved automatically.</small>
       </div>
     </div>
-  </div>
+  </form>
 </div>
-</form>
-  </div>
 
 <div id="invertoryPanel">
   <?php $selectAllItem = "SELECT * FROM wrappers ORDER BY wrappername"; $allitem = $db->getArray($selectAllItem); ?>
@@ -390,9 +410,43 @@ select
 </div>
 
 <?php 
-  $selectReservations = "SELECT * FROM reservations";
-  $allreservations = $db->getArray($selectReservations);
+$selectReservations = "SELECT * FROM reservations";
+$allreservations = $db->getArray($selectReservations);
 ?>
+
+<div id="modifyOrders">
+  <div class="container">
+    <div class="card-body" style="display: block;">
+        <table class="table" style="width: 98%;">
+          <thead>
+            <tr>
+              <th scope="col">Customer's username</th>
+              <th scope="col">Total</th>
+              <th scope="col">Ordered At:</th>
+              <th scope="col">Status:</th>
+              <th scope="col"></th>
+            </tr>
+          </thead>
+          <tbody>
+            <?php
+              #$selectOrderedItemsQuery = "SELECT cart.food_id, cart.quantity, cart.subtotal, foods.name FROM cart LEFT JOIN foods ON cart.food_id = foods.id WHERE cart.id =".$list[$i];  
+              $selectOrderedItemsQuery = "SELECT orders.id, progress, total, ordered_at, users.username FROM `orders` LEFT JOIN users ON orders.user_id = users.id";
+              $getOrderedElement = $db->getArray($selectOrderedItemsQuery);
+              ?>
+              <?php foreach ($getOrderedElement as $element) : ?>
+                <tr>
+                  <td><?php echo $element["username"]; ?></td>
+                  <td><?php echo $element["total"]; ?></td>
+                  <td><?php echo $element["ordered_at"]; ?></td>
+                  <td><?php echo $element["progress"]; ?></td>
+                  <td><a class="btn btn-success" href="order.php?order=<?php echo $element['id']; ?>"><i class="fas fa-search"></i>Review</a></td>
+                </tr>
+              <?php  endforeach; ?>
+          </tbody>
+        </table>
+    </div>
+  </div>
+</div>
 
 <div id="modifyReserve" id="reserveList">
   <?php if(count($allreservations) == 0): ?>
@@ -507,8 +561,8 @@ $allReviews = $db->getArray($selectReviews);
 </div> 
 
 <?php 
-  $selectRolesQuery = "SELECT * FROM roles"; 
-  $allrole = $db->getArray($selectRolesQuery);
+$selectRolesQuery = "SELECT * FROM roles"; 
+$allrole = $db->getArray($selectRolesQuery);
 ?>
 
 <div id="newWorkerPanel">
@@ -548,9 +602,9 @@ $allReviews = $db->getArray($selectReviews);
 </div>
 
 <?php 
-  $selectWorkersByRoleQuery = "SELECT users.id, users.role_id, roles.role, users.username FROM users INNER JOIN roles ON users.role_id = roles.id WHERE users.role_id = 3 OR users.role_id = 4 OR users.role_id = 5 ORDER BY users.id ASC";
-  $allWorker = $db->getArray($selectWorkersByRoleQuery);
- ?>
+$selectWorkersByRoleQuery = "SELECT users.id, users.role_id, roles.role, users.username FROM users INNER JOIN roles ON users.role_id = roles.id WHERE users.role_id = 3 OR users.role_id = 4 OR users.role_id = 5 ORDER BY users.id ASC";
+$allWorker = $db->getArray($selectWorkersByRoleQuery);
+?>
 <div id="manageWorkerPanel">
   <?php if(count($allWorker) == 0): ?>
     <div class="container text-center" style="background-color: rgba(255,255,255,.5);"><h3> No Workers Yet. </h3></div>
@@ -615,37 +669,79 @@ $allReviews = $db->getArray($selectReviews);
                      <th>Username:</th>
                      <td id="workerusername"></td>
                    </tr>                                                                                 
-                    <tr>
-                      <th>Active Role:</th>
-                     <td>
-                       <select name="selectrole" id="workroles">
-                        <option value="">New Role..</option>
-                         <?php foreach($allrole as $role): ?>
-                            <?php if($role["role"] != "admin"): ?>
-                              <option value="<?php echo $role['id']; ?>"><?php echo $role["role"]; ?></option>
-                            <?php endif; ?>
-                         <?php endforeach; ?>
-                       </select>
-                     </td>
-                   </tr> 
                    <tr>
-                     <th>Permission Code(s): </th>
-                     <td><input id="role_id" value="" readonly="true" style="border: none; text-decoration: none;"></td>
-                    </tr>
-                 </table>
-               </form>                                
-             </div>                                       
-           </div> 
-         </div>                       
-       </div>                              
-     </div>           
-     <div class="modal-footer"> 
-      <button type="button" class="btn btn-danger" data-dismiss="modal">Close</button> 
-      <button id="insert" class="btn btn-success" onclick="return validateWorkerModal()">Update</button>
-    </div>              
-  </div> 
+                    <th>Active Role:</th>
+                    <td>
+                     <select name="selectrole" id="workroles">
+                      <option value="">New Role..</option>
+                      <?php foreach($allrole as $role): ?>
+                        <?php if($role["role"] != "admin"): ?>
+                          <option value="<?php echo $role['id']; ?>"><?php echo $role["role"]; ?></option>
+                        <?php endif; ?>
+                      <?php endforeach; ?>
+                    </select>
+                  </td>
+                </tr> 
+                <tr>
+                 <th>Permission Code(s): </th>
+                 <td><input id="role_id" value="" readonly="true" style="border: none; text-decoration: none;"></td>
+               </tr>
+             </table>
+           </form>                                
+         </div>                                       
+       </div> 
+     </div>                       
+   </div>                              
+ </div>           
+ <div class="modal-footer"> 
+  <button type="button" class="btn btn-danger" data-dismiss="modal">Close</button> 
+  <button id="insert" class="btn btn-success" onclick="return validateWorkerModal()">Update</button>
+</div>              
+</div> 
 </div>
 </form>
+</div>
+
+<!-- User Panel -->
+
+<?php 
+$selectUsersByRoleQuery = "SELECT  id, username, email, profilepic FROM users WHERE role_id = 2";
+$allUser = $db->getArray($selectUsersByRoleQuery);
+?>
+<div id="manageUserPanel">
+  <?php if(count($allUser) == 0): ?>
+    <div class="container text-center" style="background-color: rgba(255,255,255,.5);"><h3> No Workers Yet. </h3></div>
+  <?php endif; ?>
+  <?php if(count($allUser) > 0): ?>
+
+    <table class="table" align="center" style="background-color: rgba(255,255,255,.5); width: 95%;">
+      <thead>
+        <tr>
+          <th scope="col">User's ID:</th>
+          <th scope="col">Username</th>
+          <th scope="col">Email Address</th>
+          <th scope="col">Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        <?php foreach($allUser as $user): ?>
+          <tr>
+            <th scope="row"><?php echo $user["id"]; ?></th>
+            <td>
+              <img src="<?php if(!(empty($user["profilepic"]))){ echo '../images/profiles/'.$user['username'].'/'.$user['profilepic'];} else{ echo '../images/Logo_main.png';} ?>" alt="<?php echo $user['username'].'s profile picture' ?>" style="height: 25px; width: 25px; border-radius: 50%;">  <?php echo $user["username"]; ?>
+            </td>
+            <td><?php echo $user["email"]; ?></td>
+            <td>
+              <a href="delete.php?workerid=<?php echo $user['id']; ?>" class="btn btn-sm btn-danger" title="Dismiss User"><i class="fal fa-user-minus"> Dismiss</i></a>
+              <a href="resetworkerpw.php?worker=<?php echo $user['username']; ?>" class="btn btn-sm btn-light" title="Reset Password"><i class="fas fa-sync-alt"></i></a>
+            </td>
+          </tr>
+        <?php endforeach; ?>
+      </tbody>
+    </table>
+
+  <?php endif; ?>
+
 </div>
 
 <!-- Invertory Modal -->
@@ -738,40 +834,40 @@ $allReviews = $db->getArray($selectReviews);
                    <tr>
                      <th>Reserved To: <div id="reservedate"></div></th>
                      <td>
-                        <input type="datetime-local" value="" id="newReservedate" name="newReservedate">
-                     </td>
-                   </tr>  
-                   <tr>
-                     <th>Reservation Expires: <div id="expire"></div></th>
-                     <td>
-                        <input type="datetime-local" value="" id="newExpire" name="newExpire">
-                      </td>
-                   </tr>                                 
-                   <tr>
-                     <th>People Number</th>
-                     <td id=""><input type="number" id="pepoleNo" value="" name="pepoleNo"></td>
-                   </tr> 
-                   <tr>
-                     <th>Message:</th>
-                     <td id=""><textarea name="message" id="message" rows="3"></textarea></td>
-                   </tr>                                             
-                   <tr>
-                     <th>Progress</th>
-                     <td id=""><input type="text" value="" id="progress" name="progress"></td>
-                   </tr> 
+                      <input type="datetime-local" value="" id="newReservedate" name="newReservedate">
+                    </td>
+                  </tr>  
+                  <tr>
+                   <th>Reservation Expires: <div id="expire"></div></th>
+                   <td>
+                    <input type="datetime-local" value="" id="newExpire" name="newExpire">
+                  </td>
+                </tr>                                 
+                <tr>
+                 <th>People Number</th>
+                 <td id=""><input type="number" id="pepoleNo" value="" name="pepoleNo"></td>
+               </tr> 
+               <tr>
+                 <th>Message:</th>
+                 <td id=""><textarea name="message" id="message" rows="3"></textarea></td>
+               </tr>                                             
+               <tr>
+                 <th>Progress</th>
+                 <td id=""><input type="text" value="" id="progress" name="progress"></td>
+               </tr> 
 
-                 </table>
-               </form>                                
-             </div>                                       
-           </div> 
-         </div>                       
-       </div>                              
-     </div>           
-     <div class="modal-footer"> 
-      <button type="button" class="btn btn-danger" data-dismiss="modal">Close</button> 
-      <button id="insert" class="btn btn-success" onclick="return validateModal()">Update</button>
-    </div>              
-  </div> 
+             </table>
+           </form>                                
+         </div>                                       
+       </div> 
+     </div>                       
+   </div>                              
+ </div>           
+ <div class="modal-footer"> 
+  <button type="button" class="btn btn-danger" data-dismiss="modal">Close</button> 
+  <button id="insert" class="btn btn-success" onclick="return validateModal()">Update</button>
+</div>              
+</div> 
 </div>
 </form>
 </div>
@@ -852,13 +948,13 @@ $allReviews = $db->getArray($selectReviews);
   }
 
   $(document).ready(function(){
-  $("#searchInv").on("keyup", function() {
-    var value = $(this).val().toLowerCase();
-    $("#invTable tr").filter(function() {
-      $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1)
+    $("#searchInv").on("keyup", function() {
+      var value = $(this).val().toLowerCase();
+      $("#invTable tr").filter(function() {
+        $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1)
+      });
     });
   });
-});
   
   $("#addfeaturedForm").hide();
   $("#invertoryPanel").hide();
@@ -1015,7 +1111,7 @@ $allReviews = $db->getArray($selectReviews);
 
   });
 
-$("#modifyInv").click(function(e) {
+  $("#modifyInv").click(function(e) {
     e.preventDefault();
     $("#invertoryPanel").toggle();
 
@@ -1238,8 +1334,8 @@ $("#modifyInv").click(function(e) {
  });
 
   $("#newitemInv").click(function(e) {
-  e.preventDefault();
-  $("#newITemPanel").toggle();
+    e.preventDefault();
+    $("#newITemPanel").toggle();
 
   });
 

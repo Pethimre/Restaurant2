@@ -44,7 +44,7 @@
         $db->query($deleteString);
 
         mysqli_close($conn);
-        header("Location: admin.php");
+        echo "<script>window.location.href='admin.php?success=done';</script>";
     }
 
 ?>

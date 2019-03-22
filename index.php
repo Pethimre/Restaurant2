@@ -174,6 +174,10 @@
                     echo "<script>oktext = 'Sorry,but we are not opened on that interval.'; errormsg(oktext);</script>";
                     break;
 
+                case 'error':
+                    echo "<script>oktext = 'WoW! Something unexpected happened.'; errormsg(oktext);</script>";
+                    break;
+
                 default:
                     # code...
                     break;

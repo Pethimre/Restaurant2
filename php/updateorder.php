@@ -9,8 +9,16 @@
 		$update = $db->query($updateOrderQuery);
 		echo "<script>window.location.href='worker2.php?success=done'</script>";
 	}
-	else
-	{
-		echo "<script>window.location.href='worker2.php?error=error'</script>";
+
+	if (isset($_GET["order"])) {
+		require_once "db.php";
+		$db = db::get();
+		$order = $db->escape($_GET["order"]);
+
+		$status = $db->escape($_POST["statusUpdate"]);
+		$updateOrderQuery = "UPDATE `orders` SET `progress` = '$status' WHERE `orders`.`id` = ".$order;
+		$update = $db->query($updateOrderQuery);
+		echo "<script>window.location.href='admin.php?success=done'</script>";
 	}
+
  ?>

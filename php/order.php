@@ -16,6 +16,13 @@ $db = db::get();
 
 $order = $db->escape($_GET["order"]);
 
+$selectUserRoleQuery = "SELECT role_id FROM users WHERE username ='".$_SESSION["username"]."'";
+$selectUser = $db->getArray($selectUserRoleQuery);
+
+  foreach ($selectUser as $user) {
+    $roleid = $user["role_id"];
+    }
+
 ?>
 <!DOCTYPE html>
 <html>
@@ -89,7 +96,9 @@ $order = $db->escape($_GET["order"]);
       <div class="collapse navbar-collapse" id="Food-fair-toggle">
         <ul class="nav navbar-nav navbar-right">
           <li><a href="../index.php"><i class="fal fa-chevron-left"></i><i class="fal fa-chevron-left"></i> Main Page</a></li>
-          <li><a href="profile.php"><i class="fal fa-chevron-left"></i> Profile</a></li>
+          <?php if($roleid == 2): ?><li><a href="profile.php"><i class="fal fa-chevron-left"></i> Profile</a></li><?php endif; ?>
+          <?php if($roleid == 1): ?><li><a href="admin.php"><i class="fal fa-chevron-left"></i> Admin Page</a></li><?php endif; ?>
+          <?php if($roleid != 1 && $roleid != 2): ?><li><a href="router.php"><i class="fal fa-chevron-left"></i> Dashboard</a></li><?php endif; ?>
           <li><a href="logout.php" title="Log Out"><i class="fal fa-sign-out-alt"></i> Logout</a></li>
         </ul>
       </div><!-- /.navbar-collapse -->
@@ -103,15 +112,18 @@ $order = $db->escape($_GET["order"]);
       foreach ($orders as $order) {
         $tmp = $order["items"];
         $total = $order["total"];
+        $progress = $order["progress"];
       }
 
       $list = explode(",", $tmp);
 
+      if ($roleid == 2) {
       $selectUserData = "SELECT profilepic, coverpic FROM users WHERE username ='".$_SESSION["username"]."'";
       $getUserData = $db->getArray($selectUserData);
       foreach ($getUserData as $user) {
         $cover = $user["coverpic"];
         $profile = $user["profilepic"];
+      }
       }
         
              
@@ -120,17 +132,18 @@ $order = $db->escape($_GET["order"]);
   <div class="container" style="margin-top: 7%">
     <div class="card card-custom bg-white border-white border-0 text-center" style="border-radius: 10px; background-color: rgba(255,255,255,.5);">
       <div class="card-custom-img" style="<?php if(!empty($cover)){echo "background-image: url('../images/Profiles/".$_SESSION['username']."/".$cover."');";}else{echo "background-image: url('../images/background.jpg');";} ?>">
+       <?php if($roleid == 2): ?>
        <form action="ucover.php" method="POST" enctype="multipart/form-data">
         <Label class="input-custom-file mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect" onclick="setTimeout($('#UploadCover').show('slow'), 1500)">
           <i class="fal fa-cog" title="Change Cover Picture" style="margin-top: 30%; text-shadow: -1px 0 black, 0 1px black, 1px 0 black, 0 -1px black; color: white;"></i>
           <input type="file" name="fileToUpload2" class="fileToUpload2">
         </Label>
 
-        <img class="img-fluid" src="<?php if(!(empty($profile))){ echo '../images/profiles/'.$getUserData['username'].'/'.$profile; } else{echo '../images/Logo_main.png';} ?>" />
+        <img class="img-fluid" src="<?php if(!(empty($profile))){ echo '../images/profiles/'.$_SESSION['username'].'/'.$profile; } else{echo '../images/Logo_main.png';} ?>" />
 
         <button type="submit" class="btn btn-sm btn-success text-center" id="UploadCover" name="UploadCover" style="border-radius: 50%;"><i class="fal fa-check-circle"></i></button>
       </form>
-
+    <?php endif; ?>
     </div>
       <div class="card-custom-avatar">
       </div>
@@ -140,9 +153,9 @@ $order = $db->escape($_GET["order"]);
             <table class="table">
               <thead>
                 <tr>
-                  <th scope="col">Item's name</th>
-                  <th scope="col">Quantity</th>
-                  <th scope="col">Subtotal</th>
+                  <th scope="col" class="text-center">Item's name</th>
+                  <th scope="col" class="text-center">Quantity</th>
+                  <th scope="col" class="text-center">Subtotal</th>
                 </tr>
               </thead>
               <tbody>
@@ -160,7 +173,22 @@ $order = $db->escape($_GET["order"]);
                 <?php  endforeach; ?>
                 <?php  endfor; ?>
                 <tr>
-                  <td></td>
+                  <td>
+                    <b>Status:</b> <?php echo $progress; ?>
+                   <?php if($roleid == 1): ?>
+                    <div id="openStatusUpdate"> <i class="fas fa-cog"></i></div>
+                    <form action="updateorder.php?order=<?php echo $order['id']; ?>" method="post">
+                      <select name="statusUpdate" id="statusUpdate">
+                        <option value="">Status Udate here</option>
+                        <option value="open">Open</option>
+                        <option value="delivered">Delivered</option>
+                        <option value="suspended">Suspended</option>
+                        <option value="cancelled">Cancelled</option>
+                      </select>
+                      <button class="btn btn-sm btn-success" name="updateStatus" id="updateStatus"><i class="far fa-check"></i> Submit</button>
+                    </form>
+                  <?php endif; ?>
+                  </td>
                   <td>Total:</td>
                   <td><?php echo $total." HUF"; ?></td>
                 </tr>
@@ -175,6 +203,14 @@ $order = $db->escape($_GET["order"]);
       </div>
   <script>
     $("#UploadCover").hide();
+    $("#statusUpdate").hide();
+    $("#updateStatus").hide();
+
+      $("#openStatusUpdate").click(function(e) {
+    e.preventDefault();
+    $("#statusUpdate").toggle();
+    $("#updateStatus").toggle();
+  });
   </script>
     </body>
     </html> 
