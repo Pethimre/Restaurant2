@@ -958,6 +958,7 @@ $allUser = $db->getArray($selectUsersByRoleQuery);
   
   $("#addfeaturedForm").hide();
   $("#invertoryPanel").hide();
+  $("#manageUserPanel").hide();
   $("#modifyReserve").hide();
   $("#modifyOrders").hide();
   $("#contactMenu").hide();
@@ -973,6 +974,10 @@ $allUser = $db->getArray($selectUsersByRoleQuery);
 
     if($("#contactMenu").is(":visible")){
       $("#contactMenu").hide();
+    }
+
+    if($("#manageUserPanel").is(":visible")){
+      $("#manageUserPanel").hide();
     }
 
     if($("#invertoryPanel").is(":visible")){
@@ -1032,6 +1037,10 @@ $allUser = $db->getArray($selectUsersByRoleQuery);
       $("#invertoryPanel").hide();
     }
 
+    if($("#manageUserPanel").is(":visible")){
+      $("#manageUserPanel").hide();
+    }
+
   });
 
   $("#togglerev").click(function(e) {
@@ -1075,6 +1084,10 @@ $allUser = $db->getArray($selectUsersByRoleQuery);
       $("#modifyOrders").hide();
     }
 
+    if($("#manageUserPanel").is(":visible")){
+      $("#manageUserPanel").hide();
+    }
+
   });
 
   $("#revContacts").click(function(e) {
@@ -1107,6 +1120,10 @@ $allUser = $db->getArray($selectUsersByRoleQuery);
 
     if($("#modifyOrders").is(":visible")){
       $("#modifyOrders").hide();
+    }
+
+    if($("#manageUserPanel").is(":visible")){
+      $("#manageUserPanel").hide();
     }
 
   });
@@ -1143,6 +1160,10 @@ $allUser = $db->getArray($selectUsersByRoleQuery);
       $("#modifyOrders").hide();
     }
 
+    if($("#manageUserPanel").is(":visible")){
+      $("#manageUserPanel").hide();
+    }
+
   });
 
   $("#manageWorker").click(function(e) {
@@ -1174,6 +1195,10 @@ $allUser = $db->getArray($selectUsersByRoleQuery);
 
     if($("#modifyOrders").is(":visible")){
       $("#modifyOrders").hide();
+    }
+
+    if($("#manageUserPanel").is(":visible")){
+      $("#manageUserPanel").hide();
     }
 
   });
@@ -1208,6 +1233,11 @@ $allUser = $db->getArray($selectUsersByRoleQuery);
     if($("#modifyOrders").is(":visible")){
       $("#modifyOrders").hide();
     }
+
+    if($("#manageUserPanel").is(":visible")){
+      $("#manageUserPanel").hide();
+    }
+
   });
 
   $("#modifyOrdersButton").click(function(e) {
@@ -1240,6 +1270,48 @@ $allUser = $db->getArray($selectUsersByRoleQuery);
     if($("#modifyReserve").is(":visible")){
       $("#modifyReserve").hide();
     }
+
+    if($("#manageUserPanel").is(":visible")){
+      $("#manageUserPanel").hide();
+    }
+
+  });
+
+    $("#manageUsers").click(function(e) {
+    e.preventDefault();
+    $("#manageUserPanel").toggle();
+
+    if($("#contactMenu").is(":visible")){
+      $("#contactMenu").hide();
+    }
+    if($("#addfeaturedForm").is(":visible")){
+      $("#addfeaturedForm").hide();
+    }
+
+    if($("#manageWorkerPanel").is(":visible")){
+      $("#manageWorkerPanel").hide();
+    }
+
+    if($("#newWorkerPanel").is(":visible")){
+      $("#newWorkerPanel").hide();
+    }
+
+    if($("#reviewsPanel").is(":visible")){
+      $("#reviewsPanel").hide();
+    }
+
+    if($("#invertoryPanel").is(":visible")){
+      $("#invertoryPanel").hide();
+    }
+
+    if($("#modifyReserve").is(":visible")){
+      $("#modifyReserve").hide();
+    }
+
+    if($("#modifyOrders").is(":visible")){
+      $("#modifyOrders").hide();
+    }
+    
   });
 
   $(document).ready(function(){   

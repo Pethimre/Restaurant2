@@ -95,7 +95,7 @@ $db = db::get();
       Swal.fire({
         type: 'error',
         title: 'Oops...',
-        text: '<b>' + errortext + "!</b>",
+        text: errortext + "!",
         footer: "If you need help, contact us <a href='../index.php' style='color:black;text-decoration:none;'> <i class='fas fa-arrow-right'></i></a>."
       })
     }
@@ -104,7 +104,7 @@ $db = db::get();
     {
       Swal.fire(
         'Ok!',
-        '<b>' + oktext + '!</b>',
+        oktext + '!',
         'success'
         )
     }
