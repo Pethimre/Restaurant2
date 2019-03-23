@@ -54,8 +54,10 @@
         <link rel="stylesheet" href="../css/pricing.css">
         <link rel="stylesheet" href="../css/main.css">
         <link rel="stylesheet" href="../css/foodform.css">
+        <link rel="stylesheet" href="../css/sweetalert2.min.css">
         <link rel="stylesheet" type="text/css" href="../fontawesome/css/all.css">
         <script src="../js/jquery-1.11.2.min.js"></script>
+        <script src="../js/sweetalert2.all.min.js"></script>
         <script type="text/javascript" src="../js/jquery.flexslider.min.js"></script>
         <link rel="shortcut icon" href="../images/favicon.ico" type="image/x-icon"/>
 
@@ -98,7 +100,7 @@
                         <li title="Back to the main page"><a href="../index.php"><i class="fas fa-long-arrow-alt-left"></i> back</a></li>
                         <?php     if (!isset($_SESSION["username"])) { echo "<li><a href='../register.php'>LOG IN/SIGNUP</a></li>"; } ?>
                         <?php     if (isset($_SESSION["username"]) && !($_SESSION["username"] == "admin")) { echo "<li><a href='profile.php' >PROFILE</a></li>"; } ?>
-                        <?php if(isset($_SESSION["username"]) && count($cart) > 0): ?>
+                        <?php if(isset($_SESSION["username"]) && $roleid == 2 && count($cart) > 0): ?>
                             <li style="color: white;"><a href="cart.php"><i class="far fa-shopping-cart"></i><?php echo count($cart); ?></a></li>
                         <?php endif; ?>
                         <?php     if (isset($_SESSION["username"])) { echo "<li><a href='logout.php'>Log out</a></li>"; 

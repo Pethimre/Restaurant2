@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Gép: 127.0.0.1
--- Létrehozás ideje: 2019. Már 21. 13:06
+-- Létrehozás ideje: 2019. Már 23. 14:19
 -- Kiszolgáló verziója: 10.1.31-MariaDB
 -- PHP verzió: 7.2.11
 
@@ -66,7 +66,9 @@ CREATE TABLE `cart` (
 INSERT INTO `cart` (`id`, `food_id`, `user_id`, `quantity`, `subtotal`, `status`) VALUES
 (1, 15, 2, 2, 244, 'order '),
 (4, 47, 2, 2, 2380, 'order '),
-(5, 46, 2, 1, 650, 'order ');
+(5, 46, 2, 1, 650, 'order '),
+(6, 47, 8, 1, 1190, 'order '),
+(7, 46, 8, 2, 1300, 'order ');
 
 -- --------------------------------------------------------
 
@@ -145,7 +147,9 @@ INSERT INTO `foods` (`id`, `name`, `price`, `type`, `attr`, `imgpath`, `food_des
 (21, 'Vegetable Salad', 400, 'starter', 'special lactosef', 'food2.jpg', 'If you are on a diet, maybe this will be your best choice! Delicious salad from fresh ingredients with a lot of vitamin.', 'restaurant'),
 (22, 'Fruit Salad', 300, 'starter', 'special', 'food5.jpg', 'If you like fruits and vegetables as well, than this is your salad! This mixture is for the culinary adventurers who like to try many new, or groundbreaking', 'restaurant'),
 (46, 'Chicken Gyros', 650, 'maincourse', 'normal', 'chickengyros.jpg', 'This is a chicken gyros made in a traditional greek way. Just try it out, really..', 'webshop'),
-(47, 'Pizza', 1190, 'maincourse', 'normal', 'pizza.jpg', 'This is a delicious pizza made in a true italian way...Bon\' a petit!', 'webshop');
+(47, 'Pizza', 1190, 'maincourse', 'normal', 'pizza.jpg', 'This is a delicious pizza made in a true italian way...Bon\' a petit!', 'webshop'),
+(48, 'Pizza Cake', 3250, 'maincourse', 'normal', 'pepperonipizzacake.jpg', 'This is a really special main course for customers who seek amazing new dishes. There is a free 1.75L coke for every \"cake\". Bon apetit!', 'both'),
+(49, 'Spring Gyros', 300, 'maincourse', 'normal', 'img3.jpg', 'This is our special offer to welcome the spring! This may be your best choice to try out our gyros.', 'webshop');
 
 -- --------------------------------------------------------
 
@@ -180,7 +184,9 @@ INSERT INTO `nutrients` (`nutrient_id`, `food_id`, `protein`, `carb`, `sodium`, 
 (9, 21, '0.40', '3.00', '0.20', '3.60', '0.70', '2.80', '0.10', '0.00'),
 (10, 22, '0.70', '1.80', '0.10', '4.20', '1.20', '2.00', '0.10', '0.00'),
 (18, 46, '3.70', '9.40', '0.90', '0.20', '4.70', '7.10', '0.10', '4.00'),
-(19, 47, '3.10', '5.60', '0.10', '0.20', '5.40', '7.00', '0.00', '6.10');
+(19, 47, '3.10', '5.60', '0.10', '0.20', '5.40', '7.00', '0.00', '6.10'),
+(20, 48, '23.20', '46.00', '0.10', '0.00', '36.90', '12.00', '0.20', '9.99'),
+(21, 49, '4.33', '25.00', '0.10', '0.50', '9.80', '13.00', '0.00', '9.99');
 
 -- --------------------------------------------------------
 
@@ -202,8 +208,9 @@ CREATE TABLE `orders` (
 --
 
 INSERT INTO `orders` (`id`, `items`, `progress`, `user_id`, `total`, `ordered_at`) VALUES
-(1, '1', 'open', 2, 244, '2019-03-21 10:18:03'),
-(2, '4,5', 'open', 2, 3030, '2019-03-21 12:09:42');
+(1, '1', 'delivered', 2, 244, '2019-03-21 10:18:03'),
+(2, '4,5', 'canceled', 2, 3030, '2019-03-21 12:09:42'),
+(3, '6,7', 'suspended', 8, 2490, '2019-03-22 10:30:07');
 
 -- --------------------------------------------------------
 
@@ -229,10 +236,7 @@ CREATE TABLE `reservations` (
 --
 
 INSERT INTO `reservations` (`id`, `forWho`, `reserve_date`, `reserve_date_end`, `pepoleNo`, `message`, `progress`, `user_id`, `bookedat`, `table_id`) VALUES
-(1, 'Teszt Elek', '2019-03-31 14:27:00', '2019-03-31 16:27:00', 1, 'kek', 'open', 8, '2019-03-17', 2),
-(6, 'Teszt Elek', '2019-03-31 05:15:00', '2019-03-31 07:15:00', 2, 'I am hungry', 'open', 8, '2019-03-17', 1),
-(12, 'Kek Elek', '2019-03-24 03:04:00', '2019-03-24 05:04:00', 3, 'No message  given.', 'open', 2, '2019-03-20', 2),
-(13, 'Kek Elek', '2019-04-12 04:12:00', '2019-04-12 06:12:00', 1, 'I want to reserve.', 'open', 2, '2019-03-20', 6);
+(1, 'Kek Elek', '2019-03-26 09:06:00', '2019-03-26 12:00:00', 3, 'No message given.', 'open', 2, '2019-03-21', 3);
 
 -- --------------------------------------------------------
 
@@ -490,7 +494,7 @@ ALTER TABLE `addresses`
 -- AUTO_INCREMENT a táblához `cart`
 --
 ALTER TABLE `cart`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=8;
 
 --
 -- AUTO_INCREMENT a táblához `contacts`
@@ -514,25 +518,25 @@ ALTER TABLE `favorites`
 -- AUTO_INCREMENT a táblához `foods`
 --
 ALTER TABLE `foods`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=48;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=50;
 
 --
 -- AUTO_INCREMENT a táblához `nutrients`
 --
 ALTER TABLE `nutrients`
-  MODIFY `nutrient_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=20;
+  MODIFY `nutrient_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=22;
 
 --
 -- AUTO_INCREMENT a táblához `orders`
 --
 ALTER TABLE `orders`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
 
 --
 -- AUTO_INCREMENT a táblához `reservations`
 --
 ALTER TABLE `reservations`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=14;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
 
 --
 -- AUTO_INCREMENT a táblához `reviews`

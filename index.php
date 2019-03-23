@@ -314,17 +314,17 @@
                                 <?php   if(count($allfeatured) > 0): 
                                         foreach($allfeatured as $featured): 
                                 ?>
-                                <li class="item <?php echo $featured['type'] .' '.$featured['attr']; ?>">
+                                <li class="item <?php echo $featured['type'] .' '.$featured['attr']; ?>" style="border-radius: 15px;">
 
-                                    <a href="#">
-                                        <img src="images/featured/<?php echo $featured['imgpath']; ?>" class="img-responsive" alt="Food">
-                                        <div class="menu-desc text-center">
-                                            <span>
+                                    <a href="#" style="border-radius: 15px;">
+                                        <img src="images/featured/<?php echo $featured['imgpath']; ?>" class="img-responsive" style="height: 175.6px!important; width: 300px!important; border-radius: 15px;" alt="Food">
+                                        <div class="menu-desc text-center" style="border-radius: 15px;">
+                                            <span style="border-radius: 15px;">
                                                 <h3 onclick="window.location.href='php/foodform.php?foodid=<?php echo $featured["id"]; ?>'"><?php echo $featured['name']; ?></h3>
                                                 <?php if($_SESSION["username"] == "admin"): ?>
                                                     <input type="button" class="btn btn-danger" onclick="window.location.href='php/delete.php?foodid=<?php echo $featured['id'];?>'" value="Remove"><br>
                                                 <?php endif; ?>
-                                                <?php echo $featured['food_desc'] ."<br>"; ?>
+                                                <?php echo substr($featured["food_desc"], 0,15); if(strlen($featured["food_desc"])>15){echo "...";} ?>
                                             </span>
                                         </div>
                                     </a>
@@ -736,8 +736,8 @@
                 <div class="row">
                     <div class="col-md-6 col-md-offset-3">
                         <div class="copyright text-center">
-                            <p>
-                                &copy; Copyright, <?php echo date("Y"); ?> All rights reserved. <div onclick="terms()"> Terms of use <i class="fal fa-book"></i></div> 
+                            <p onclick="terms()">
+                                &copy; Copyright, <?php echo date("Y"); ?> All rights reserved. Terms of use <i class="fal fa-book"></i> 
                             </p>
                         </div>
                     </div>
