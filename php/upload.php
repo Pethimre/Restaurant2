@@ -24,8 +24,7 @@ if (isset($_POST["submit"]))
 
     if (empty($name) || empty($price) || empty($type) || empty($attr) || empty($foodtext)) 
     { 
-        array_push($error, "Every gap must be filled.");
-        header("location: admin.php");
+        echo "<script>window.location.href='admin.php?error=empty'</script>";
     }
     else
     {
@@ -40,38 +39,37 @@ if (isset($_POST["submit"]))
             $check = getimagesize($_FILES["fileToUpload"]["tmp_name"]);
             if($check !== false) 
             {
-                echo "File is an image - " . $check["mime"] . ".(it exists maybe)";
                 $uploadOk = 1;
                 //header("location: addf.php");
             } 
             else 
             {
-                array_push($error, "File is not an image.");
+                echo "<script>window.location.href='admin.php?error=notImage'</script>";
                 $uploadOk = 0;echo "Hiba 2";
             }
         }
     // Check if file already exists
         if (file_exists($target_file)) 
         {
-            array_push($error, "Sorry, file already exists.");
+            echo "<script>window.location.href='admin.php?error=imageExists'</script>";
             $uploadOk = 0;
         }
     // Check file size
         if ($_FILES["fileToUpload"]["size"] > 5000000) 
         {
-            array_push($error, "Sorry, your file is too large.");echo "Hiba 3";
+            echo "<script>window.location.href='admin.php?error=largeImage'</script>";
             $uploadOk = 0;
         }
     // Allow certain file formats
         if($imageFileType != "jpg" && $imageFileType != "png" && $imageFileType != "jpeg" && $imageFileType != "gif" && $imageFileType != "bmp") 
         {
-            array_push($error, "Sorry, only JPG, JPEG, BMP, PNG & GIF files are allowed.");echo "Hiba 4";
+            echo "<script>window.location.href='admin.php?error=wrongFileFormat'</script>";
             $uploadOk = 0;
         }
     // Check if $uploadOk is set to 0 by an error
         if ($uploadOk == 0) 
         {
-            array_push($error, "Sorry, your file was not uploaded.");echo "Hiba 5";
+            echo "<script>window.location.href='admin.php?error=noUpload'</script>";
     // if everything is ok, try to upload file
         } 
         if ($uploadOk == 1) 
@@ -84,12 +82,11 @@ if (isset($_POST["submit"]))
                 $foodId = (int)$foodId;
                 $insertNutrients = "INSERT INTO `nutrients` (`nutrient_id`, `food_id`, `protein`, `carb`, `sodium`, `fiber`, `fat`, `sat_fat`, `sugar`, `cholesterol`) VALUES (NULL, '$foodId', '$protein', '$carb', '$sodium', '$fiber', '$fat', '$sat_fat', '$sugar', '$cholesterol')";
                 mysqli_query($db, $insertNutrients);
-                array_push($error, "Success");var_dump($insertQuery);
-                header("location: admin.php");
+                echo "<script>window.location.href='admin.php?success=done'</script>";
             } 
             else 
             {
-                array_push($error, "Sorry, there was an error uploading your file.");echo "Hiba 6";
+                echo "<script>window.location.href='admin.php?error=noUpload'</script>";
             }
         }
     }
@@ -111,11 +108,11 @@ if (isset($_POST["addrev"])) {
 
         $insertQuery = "INSERT INTO `reviews` (`id`, `title`, `message`, `author`, `website`, `url`) VALUES (NULL, '$title', '$message', '$author', '$website', '$url')";
         $query = $db->query($insertQuery);
-        header("location: admin.php");
+        echo "<script>window.location.href='admin.php?success=done'</script>";
     }
     else
     {
-        echo "Something unexpected happened. Check if you filled the form correctly and navigate <a href='admin.php'> back</a>";
+        echo "<script>window.location.href='admin.php?error=unexpected'</script>";
     }
 }
 

@@ -167,8 +167,43 @@ session_start();
 </head>
 <body class="bg info" data-spy="scroll" data-target="#template-navbar">
   <?php 
-  if ($error == "closed") {
-    echo "<script>oktext = 'We are not opened on that interval.'; errormsg(oktext);</script>";
+
+  switch ($error) {
+    case 'closed':
+      echo "<script>oktext = 'We are not opened on that interval.'; errormsg(oktext);</script>";
+      break;
+
+    case 'empty':
+      echo "<script>oktext = 'Every gap must be filled.'; errormsg(oktext);</script>";
+      break;
+
+    case 'imageExists':
+      echo "<script>oktext = 'Image already exists.'; errormsg(oktext);</script>";
+      break;
+
+    case 'notImage':
+      echo "<script>oktext = 'The selected file doesnt seem to be a valid image.'; errormsg(oktext);</script>";
+      break;
+
+    case 'largeImage':
+      echo "<script>oktext = 'The selected file doesnt seem to be a valid image.'; errormsg(oktext);</script>";
+      break;
+
+    case 'wrongFileFormat':
+      echo "<script>oktext = 'Only JPEG, JPG, PNG and GIF files are allowed.'; errormsg(oktext);</script>";
+      break;
+
+    case 'noUpload':
+      echo "<script>oktext = 'Sorry, your file wasnt uploaded.'; errormsg(oktext);</script>";
+      break;
+
+    case 'unexpected':
+      echo "<script>oktext = 'WoW. Something unexpected happened. Please try again later'; errormsg(oktext);</script>";
+      break;
+    
+    default:
+      # code...
+      break;
   }
 
   if ($success == "done") {

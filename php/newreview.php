@@ -15,11 +15,11 @@
 			
 			$insertQuery = "INSERT INTO `reviews` (`id`, `title`, `message`, `author`, `website`, `url`) VALUES (NULL, '$title', '$message', '$author', '$website', '$url')";
 			$query = $db->query($insertQuery);
-			header("admin.php");
+			echo "<script>window.location.href='admin.php?success=done'</script>";
 		}
 		else
 		{
-			echo "Something unexpected happened. Check if you filled the form correctly and navigate <a href='admin.php'> back</a>";
+			echo "<script>window.location.href='admin.php?error=unexpected'</script>";
 		}
 	}
 	

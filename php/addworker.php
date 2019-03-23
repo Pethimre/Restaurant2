@@ -17,7 +17,11 @@
 		{
 			$selectInsertQuery = "INSERT INTO `users` (`id`, `username`, `email`, `password`, `Fullname`, `PhoneNo`, `profilepic`, `role_id`) VALUES (NULL, '".$username."', '".$email."', '".$beginnerpassword."', '".$fullName."', '$phone',NULL, '".$roleid."')";
 			$query = $db->query($selectInsertQuery);
-			echo "<script>window.location.href='admin.php';</script>";
+			echo "<script>window.location.href='admin.php?success=done'</script>";
+		}
+		else
+		{
+			echo "<script>window.location.href='admin.php?error=empty'</script>";
 		}
 	}
  ?>
