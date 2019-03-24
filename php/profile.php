@@ -362,7 +362,7 @@ $db = db::get();
   <?php endif; ?>
   <?php if(count($allreservations) > 0): ?>
 
-    <table class="table" style="background-color: rgba(255,255,255,.25);">
+    <table class="table" style="background-color: rgba(255,255,255,.25); border-radius: 10px;">
       <thead>
         <tr>
           <th scope="col">Reservation ID:</th>
@@ -386,18 +386,19 @@ $db = db::get();
   <?php endif; ?>
 
   <?php if(count($allOrders) == 0): ?>
-    <div class="container text-center" style="background-color: rgba(255,255,255,.5); width: 98%!important; border-radius: 20px;"><h3> No Orders Yet. </h3>Get some <a href="../index.php" style="text-decoration: none;"><h4>here</h4></a></div><br>
+    <div class="container text-center" style="background-color: rgba(255,255,255,.5); border-radius: 10px;"><h3> No Orders Yet. </h3>Get some <a href="../index.php" style="text-decoration: none;"><h4>here</h4></a></div><br>
   <?php endif; ?>
 
   <?php if(count($allOrders) > 0): ?>
 
-    <table class="table" style="background-color: rgba(255,255,255,.5); width: 95%!important;">
+    <table class="table" style="background-color: rgba(255,255,255,.5); border-radius: 10px;">
       <thead>
         <tr>
           <th scope="col">Order ID:</th>
           <th scope="col">Ordered At</th>
           <th scope="col">Status</th>
           <th scope="col">Review</th>
+          <th scope="col"></th>
         </tr>
       </thead>
       <tbody>
@@ -407,6 +408,11 @@ $db = db::get();
             <td><?php echo $orders["ordered_at"]; ?></td>
             <td><?php echo $orders["progress"]; ?></td>
             <td><a class="btn btn-success" href="order.php?order=<?php echo $orders['id']; ?>"><i class="fas fa-search"></i>Review</a></td>
+            <td>
+              <?php if($orders["progress"] == "delivered"): ?>
+                <a href="../invoice/invoices/bill.php?order=<?php echo $orders['id']; ?>" class="btn btn-sm btn-success"><i class="fal fa-file-invoice-dollar"></i> View Invoice</a>
+            <?php endif; ?>
+            </td>
           </tr>
         <?php endforeach; ?>
       </tbody>
