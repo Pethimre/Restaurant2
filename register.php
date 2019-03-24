@@ -92,14 +92,14 @@
 
           <div class="field-wrap">
             <label class="placeholdertext">
-              <?php if(empty($shppingAddr)){echo "Shipping Address";}?><span class="req"><?php if(empty($shppingAddr)){echo "*";} ?></span>
+              <?php if(empty($shppingAddr)){echo "Shipping Address (City, State, Zip)";}?><span class="req"><?php if(empty($shppingAddr)){echo "*";} ?></span>
             </label>
             <input name="shppingAddr" placeholder="" type="text" required autocomplete="off" maxlength="128" value="<?php if(!empty($shppingAddr)){echo $shppingAddr;} ?>"/>
           </div>
 
           <div class="field-wrap">
             <label class="placeholdertext">
-              <?php if(empty($billingAddr)){echo "Billing Address";}?><span class="req"><?php if(empty($billingAddr)){echo "*";} ?></span>
+              <?php if(empty($billingAddr)){echo "Billing Address (City, State, Zip)";}?><span class="req"><?php if(empty($billingAddr)){echo "*";} ?></span>
             </label>
             <input type="text" name="billingAddr" placeholder="" required autocomplete="off" maxlength="128" value="<?php if(!empty($billingAddr)){echo $billingAddr;} ?>"/>
           </div>
