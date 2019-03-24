@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Gép: 127.0.0.1
--- Létrehozás ideje: 2019. Már 23. 14:19
+-- Létrehozás ideje: 2019. Már 24. 17:09
 -- Kiszolgáló verziója: 10.1.31-MariaDB
 -- PHP verzió: 7.2.11
 
@@ -64,7 +64,7 @@ CREATE TABLE `cart` (
 --
 
 INSERT INTO `cart` (`id`, `food_id`, `user_id`, `quantity`, `subtotal`, `status`) VALUES
-(1, 15, 2, 2, 244, 'order '),
+(1, 15, 2, 2, 2900, 'order '),
 (4, 47, 2, 2, 2380, 'order '),
 (5, 46, 2, 1, 650, 'order '),
 (6, 47, 8, 1, 1190, 'order '),
@@ -208,7 +208,7 @@ CREATE TABLE `orders` (
 --
 
 INSERT INTO `orders` (`id`, `items`, `progress`, `user_id`, `total`, `ordered_at`) VALUES
-(1, '1', 'delivered', 2, 244, '2019-03-21 10:18:03'),
+(1, '1', 'delivered', 2, 2900, '2019-03-21 10:18:03'),
 (2, '4,5', 'canceled', 2, 3030, '2019-03-21 12:09:42'),
 (3, '6,7', 'suspended', 8, 2490, '2019-03-22 10:30:07');
 

@@ -410,7 +410,7 @@ $db = db::get();
             <td><a class="btn btn-success" href="order.php?order=<?php echo $orders['id']; ?>"><i class="fas fa-search"></i>Review</a></td>
             <td>
               <?php if($orders["progress"] == "delivered"): ?>
-                <a href="../invoice/invoices/bill.php?order=<?php echo $orders['id']; ?>" class="btn btn-sm btn-success"><i class="fal fa-file-invoice-dollar"></i> View Invoice</a>
+                <a href="../invoice/invoices/bill.php?order=<?php echo $orders['id']; ?>" target="blank" class="btn btn-sm btn-success"><i class="fal fa-file-invoice-dollar"></i> View Invoice</a>
             <?php endif; ?>
             </td>
           </tr>
