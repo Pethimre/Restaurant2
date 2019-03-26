@@ -1,5 +1,6 @@
 <?php
 session_start();
+error_reporting(E_ALL & ~E_NOTICE); //Hide php notifications on the page
 
 $username = "";
 $email    = "";
@@ -48,16 +49,23 @@ if (isset($_POST['reg_user'])) {
   }
 
   if (count($errors) == 0) {
-  	$password = md5($password_1);
+    if (strlen($password) >= 8) {
+      $password = md5($password_1);
 
-  	$query = "INSERT INTO `users` (`id`, `username`, `email`, `password`, `Fullname`, `PhoneNo`, `profilepic`, `role_id`) VALUES (NULL, '$username', '$email', '$password', '$fullname', '$phoneNumber', NULL, '2')";
-    $addressQuery = "INSERT INTO `addresses` (`id`, `shipping_address`, `billing_address`, `username`) VALUES (NULL, '$shppingAddr', '$billingAddr', '$username');";
-  	mysqli_query($db, $query);
-    mysqli_query($db, $addressQuery);
-  	$_SESSION['username'] = $username;
-  	$_SESSION['success'] = "You are now logged in";
-    mkdir('images/profiles/'.$username, 0777, true);
-  	header('location: index.php');
+      $query = "INSERT INTO `users` (`id`, `username`, `email`, `password`, `Fullname`, `PhoneNo`, `profilepic`, `role_id`) VALUES (NULL, '$username', '$email', '$password', '$fullname', '$phoneNumber', NULL, '2')";
+      $addressQuery = "INSERT INTO `addresses` (`id`, `shipping_address`, `billing_address`, `username`) VALUES (NULL, '$shppingAddr', '$billingAddr', '$username');";
+      mysqli_query($db, $query);
+      mysqli_query($db, $addressQuery);
+      $_SESSION['username'] = $username;
+      $_SESSION['success'] = "You are now logged in";
+      mkdir('images/profiles/'.$username, 0777, true);
+      header('location: index.php');
+    }
+    else
+    {
+      array_push($errors, "Password needs to be at least 8 characters long.");
+    }
+  	
   }
 }
 
@@ -78,7 +86,6 @@ if (isset($_POST['login_user'])) {
     $results = mysqli_query($db, $query);
     if (mysqli_num_rows($results) == 1) {
       $_SESSION['username'] = $username;
-      $_SESSION['success'] = "You are now logged in";
       header('location: index.php');
     }else {
       array_push($errors, "Wrong username/password combination");
