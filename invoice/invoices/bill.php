@@ -33,22 +33,9 @@
 
       $list = explode(",", $tmp);
 
-
-/*
- * INVOICR : THE PHP INVOICE GENERATOR (HTML, DOCX, PDF)
- * Visit https://code-boxx.com/invoicr-php-invoice-generator for more
- * 
- * ! YOU CAN DELETE THE ENTIRE EXAMPLE FOLDER IF YOU DON'T NEED IT... !
- */
-
-/* [STEP 1 - CREATE NEW INVOICR OBJECT] */
 require dirname(__DIR__) . DIRECTORY_SEPARATOR . "invoicr.php";
 $invoice = new Invoicr();
 
-
-/* [STEP 2 - FEED ALL THE INFORMATION] */
-// 2A - COMPANY INFORMATION
-// OR YOU CAN PERMANENTLY CODE THIS INTO THE LIBRARY ITSELF
 $invoice->set("company", [
 	"eatwell.png", 
 	"Eatwell", 
@@ -58,7 +45,6 @@ $invoice->set("company", [
 	"info@eatwell.com"
 ]);
 
-// 2B - INVOICE INFO
 $invoice->set("invoice", [
 	["Invoice Id", $orderid],
 	["Order Placed at", "<br>".$orderedAt],
@@ -66,14 +52,12 @@ $invoice->set("invoice", [
 	["Bill printed at", $now]
 ]);
 
-// 2C - BILL TO
 $invoice->set("billto", [
 	"",
 	$fullname,
 	$billing
 ]);
 
-// 2D - SHIP TO
 $invoice->set("shipto", [
 	"",
 	$fullname,
@@ -95,30 +79,20 @@ $invoice->set("shipto", [
         }
         
     }
-    
-
-// 2E - ITEMS
-// YOU CAN JUST DUMP THE ENTIRE ARRAY IN USING SET, BUT HERE IS HOW TO ADD ONE AT A TIME... 
-#$items = [["Rubber Hose", "5m long rubber hose", 3, "$5.50", "$16.50"],];
 
 foreach ($items as $i) { $invoice->add("items", $i); }
 
-// 2F - TOTALS
 $invoice->set("totals", [
 	["SUB-TOTAL", $total],
 	["", ""],
 	["GRAND TOTAL", $total]
 ]);
 
-// 2G - NOTES, IF ANY
 $invoice->set("notes", [
 	"Thank you for choosing us!",
 	"Hope we will meet again!"
 ]);
 
-
-/* [STEP 3 - OUTPUT] */
-// 3A - CHOOSE TEMPLATE, DEFAULTS TO SIMPLE IF NOT SPECIFIED
 $invoice->template("apple");
 
 /*****************************************************************************/
