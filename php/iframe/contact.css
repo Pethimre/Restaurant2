@@ -13,7 +13,7 @@ body
   text-align: center;
   font-family: 'Amatic SC';
   font-size: 6vh;
-  color: white;
+  color: black;
   opacity: .75;
   animation: pulse 2.5s linear infinite;
 }

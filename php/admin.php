@@ -264,11 +264,10 @@
     </div><!-- /.row -->
   </nav>
 
-  <div class="info container" style="margin-top: 5%;background-color: rgba(239,239,239, .09);">
+  <div class="info container" style="margin-top: 5%;background-color: rgba(239,239,239, .7);">
    <div class="jumbotron text-center" style="background-color: rgba(255,255,255,.5);">
     <h2>Admin Page</h2>
     <small>Welcome back!</small>
-    <?php if(count($errors) > 0): ?><small color="red"><?php foreach($errors as $error){echo $error."<br>";} endif; ?></small>
   </div>
   <div id="addfeaturedForm">
    <form method="POST" action="upload.php" enctype="multipart/form-data">
@@ -603,11 +602,11 @@ $allrole = $db->getArray($selectRolesQuery);
 <div id="newWorkerPanel">
   <form action="addworker.php" method="POST">
     <div class="form-group">
-      <label for="exampleFormControlInput1" style="color: white;">Worker's username:</label>
+      <label for="exampleFormControlInput1">Worker's username:</label>
       <input type="text" name="username" class="form-control registry" id="exampleFormControlInput1" placeholder="Ought to be person specific" required>
     </div>
     <div class="form-group">
-      <label for="exampleFormControlSelect1" style="color: white;">Profession</label>
+      <label for="exampleFormControlSelect1">Profession</label>
       <select name="selectrole" id="selectrole" class="exampleFormControlSelect1 form-control registry">
         <option value="">Select Rule</option>
         <?php if(count($allrole) > 0): ?>
@@ -620,19 +619,19 @@ $allrole = $db->getArray($selectRolesQuery);
       </select>
     </div>
     <div class="form-group">
-      <label for="exampleFormControlInput1" style="color: white;">Email Address:</label>
+      <label for="exampleFormControlInput1">Email Address:</label>
       <input type="email" name="email" class="form-control registry" id="exampleFormControlInput1" required>
     </div>
     <div class="form-group">
-      <label for="exampleFormControlInput1" style="color: white;">Full Name:</label>
+      <label for="exampleFormControlInput1">Full Name:</label>
       <input type="text" name="fullNameInput" class="form-control registry" id="exampleFormControlInput2" required>
     </div>
     <div class="form-group">
-      <label for="exampleFormControlInput1" style="color: white;">Phone Number:</label>
+      <label for="exampleFormControlInput1">Phone Number:</label>
       <input type="tel" name="phone" class="form-control registry" id="exampleFormControlInput3" required>
     </div>
     <button class="btn btn-success" name="addworker" id="addworker"><i class="fal fa-user-plus"></i> Add Worker</button>
-    <br>
+    <br><hr>
   </form>
 </div>
 
@@ -767,7 +766,7 @@ $allUser = $db->getArray($selectUsersByRoleQuery);
             </td>
             <td><?php echo $user["email"]; ?></td>
             <td>
-              <a href="delete.php?workerid=<?php echo $user['id']; ?>" class="btn btn-sm btn-danger" title="Dismiss User"><i class="fal fa-user-minus"> Dismiss</i></a>
+              <!--a href="delete.php?workerid=<?php echo $user['id']; ?>" class="btn btn-sm btn-danger" title="Dismiss User"><i class="fal fa-user-minus"> Dismiss</i></a-->
               <a href="resetworkerpw.php?worker=<?php echo $user['username']; ?>" class="btn btn-sm btn-light" title="Reset Password"><i class="fas fa-sync-alt"></i></a>
             </td>
           </tr>
