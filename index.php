@@ -159,7 +159,7 @@
                     break;
 
                 case 'big':
-                    echo "<script>oktext = 'Our biggest table can hosts 20 people. If you need more space, contact us and ask for event booking.'; errormsg(oktext);</script>";
+                    echo "<script>oktext = 'This table cannot host that much people. If you need more space, contact us and ask for event booking.'; errormsg(oktext);</script>";
                     break;
 
                 case 'wrongDate':
@@ -609,7 +609,20 @@
                                         </div> 
                                         <div class="col-md-6 col-sm-6">
                                             <div class="form-group">
-                                                <input type="number" min="1" max="20" class="form-control reserve-form empty iconified" name="tableNumber" id="tableNumber" required="required" placeholder=" &#xf0c0;  Select Table">
+                                                <select class="form-control reserve-form empty iconified" name="tableNumber" id="tableNumber" required="required">
+                                                <?php 
+                                                    $getTablesQuery = "SELECT * FROM tables";
+                                                    $tables = $db->getArray($getTablesQuery);
+                                                    if(count($tables) >= 1):
+                                                        foreach($tables as $table):
+                                                 ?>
+                                                        <option value="<?php echo $table['id']; ?>">Table <?php echo $table['id']; ?>: <?php echo $table["details"]; ?></option>
+                                                    <?php endforeach; ?>
+                                                 <?php endif; ?>
+                                                 <?php if(count($tables) < 1): ?>
+                                                    <option value="">This feature is unavailable at the moment. If you find bugs on the page, contact us, and win a free meal!</option>
+                                                 <?php endif; ?>
+                                                </select>
                                             </div>
                                         </div> 
 

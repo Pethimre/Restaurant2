@@ -1,5 +1,6 @@
 <?php 
 	session_start();
+	error_reporting(E_ALL & ~E_ALL); //Hide php notifications on the page
 	require_once "db.php";
 
 	$db = db::get();
@@ -68,9 +69,27 @@ if (isset($_POST["submit"])) {
 					}
 
 					if (!(in_array($tableNumber, $reservedThen))) {
-						$insertString = "INSERT INTO `reservations` (`id`, `forWho`, `reserve_date`, `reserve_date_end`, `pepoleNo`, `message`, `progress`, `user_id`, `bookedat`, `table_id`) VALUES (NULL, '$forwho', '".date_format($reservedate, 'Y-m-d H:i:s')."', '".$endReserve."', '$pepolenumber', '$message', 'open', '$userid', '$bookedat', '$tableNumber')";
-						mysqli_query($conn, $insertString);
-						header("location: ../index.php?success=thankyou");
+						require_once "db.php";
+						$db = db::get();
+
+						$selectNumberOfPepoleQuery = "SELECT space FROM tables WHERE id =".$tableNumber;
+						$NumberOfHostedPepole = $db->getArray($selectNumberOfPepoleQuery);
+
+						foreach ($NumberOfHostedPepole as $hosted) {
+							$space = intval($hosted["space"]);
+						}
+
+						if($space >= $pepolenumber)
+						{
+							$insertString = "INSERT INTO `reservations` (`id`, `forWho`, `reserve_date`, `reserve_date_end`, `pepoleNo`, `message`, `progress`, `user_id`, `bookedat`, `table_id`) VALUES (NULL, '$forwho', '".date_format($reservedate, 'Y-m-d H:i:s')."', '".$endReserve."', '$pepolenumber', '$message', 'open', '$userid', '$bookedat', '$tableNumber')";
+							mysqli_query($conn, $insertString);
+							header("location: ../index.php?success=thankyou");
+						}
+						else
+						{
+							echo "<script>window.location.href='../index.php?error=big';</script>";
+						}
+						
 					}
 					else
 					{
