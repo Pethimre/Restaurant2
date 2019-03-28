@@ -183,16 +183,22 @@ if (isset($error) && $error == "error") {
                     <th scope="col">Ordered At</th>
                     <th scope="col">Status</th>
                     <th scope="col">Ordered By</th>
+                    <th scope="col">Destination:</th>
                     <th scope="col" id="togglerev"><div id="hideRev"><i class="fal fa-eye-slash"></i> Hide</div><div id="showrev"><i class="fal fa-eye"></i> Show</div></th>
                   </tr>
                 </thead>
                 <tbody class="revitem">
                   <?php foreach($allorders as $orders): ?>
                     <tr style="text-align:left;"><form action="updateorder.php?item=<?php echo $orders['id']; ?>" method="post">
+                      <?php 
+                          $getCurrentAddressQuery = "SELECT shipping_address FROM addresses WHERE username = '".$orders["username"]."'";
+                          $currentAddress = $db->getArray($getCurrentAddressQuery);
+                       ?>
                       <th scope="row"><?php echo $orders["id"]; ?></th>
                       <td><?php echo $orders["ordered_at"]; ?></td>
                       <td><?php echo $orders["progress"]; ?></td>
                       <td><?php echo $orders["username"]; ?></td>
+                      <td><?php foreach($currentAddress as $address){echo $address["shipping_address"];} ?></td>
                       <td>
                         <select name="statusUpdate">
                           <option value="delivered">Delivered</option>
