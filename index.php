@@ -215,11 +215,11 @@
                         <li><a href="#contact">contact</a></li>
                         <?php     if (!isset($_SESSION["username"])) { echo "<li><a href='register.php'>LOG IN/SIGNUP</a></li>"; } ?>
                         <?php     if (isset($_SESSION["username"]) && !($_SESSION["username"] == "admin")) { if($roleid != 2){echo "<li><a href='php/router.php' >Dashboard</a></li>";} if($roleid == 2){echo "<li><a href='php/profile.php' >Profile</a></li>";} } ?>
-                        <?php     if (isset($_SESSION["username"])) { if($_SESSION["username"] == "admin"){echo "<li><a href='php/admin.php'>Admin Page</a></li>";}
-                        echo "<li><a href='php/logout.php'><i class='fal fa-sign-out-alt' title='Log Out'></i></a></li>";} ?>
                         <?php if(isset($_SESSION["username"]) && count($cart) > 0): ?>
                             <li style="color: white;"><a href="php/cart.php"><i class="far fa-shopping-cart"></i><?php echo count($cart); ?></a></li>
                         <?php endif; ?>
+                        <?php     if (isset($_SESSION["username"])) { if($_SESSION["username"] == "admin"){echo "<li><a href='php/admin.php'>Admin Page</a></li>";}
+                        echo "<li><a href='php/logout.php'><i class='fal fa-sign-out-alt' title='Log Out'></i></a></li>";} ?>
                     </ul>
                 </div><!-- /.navbar-collapse -->
             </div><!-- /.row -->

@@ -214,7 +214,7 @@ $db = db::get();
 </nav>
 
 <div class="container" style="margin-top: 7%">
-  <div class="card card-custom bg-white border-white border-0 text-center" style="border-radius: 10px;">
+  <div class="card card-custom bg-white border-white border-0 text-center" style="border-radius: 10px; background-color: rgba(255,255,255,.7);">
     <div class="card-custom-img" style="<?php if(!empty($user['coverpic'])){echo "background-image: url('../images/Profiles/".$_SESSION['username']."/".$user['coverpic']."');";}else{echo "background-image: url('../images/background.jpg');";} ?>">
      <form action="ucover.php" method="POST" enctype="multipart/form-data">
       <Label class="input-custom-file mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect" onclick="setTimeout($('#UploadCover').show('slow'), 1500)">
@@ -255,7 +255,7 @@ $db = db::get();
 
           <input type="password" class="form-control registry" placeholder="Confirm With Your Password" id="confirmpw" name="password" onfocus="this.style.color='rgba(66,58,58,1)'" required>
           <button class="btn btn-success" name="submit"><i class="fas fa-user-cog"></i> Save Modifications</button>
-          <h3 class="text-center" style="background-color: rgba(0,0,0,.33); color: white;">Profile Picture is Optional</h3>
+          <h3 class="text-center">Profile Picture is Optional</h3>
         </form>
         <form action="uprofile.php" method="POST" enctype="multipart/form-data">
           <p>
