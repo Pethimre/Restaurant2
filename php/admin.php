@@ -226,7 +226,7 @@
 
       <div class="collapse navbar-collapse" id="Food-fair-toggle">
         <ul class="nav navbar-nav navbar-right">
-          <li><a href="../index.php"><i class="fal fa-chevron-left"></i> Main Page</a></li>
+          <li><a href="../index.php"><i class="fal fa-chevron-left"></i><i class="fal fa-chevron-left"></i> Main Page</a></li>
           <li><a href="#" id="modifyOrdersButton"><i class="fal fa-shopping-cart"></i> Orders</a></li>
           <li><a href="#" id="modifyRes"><i class="fal fa-calendar-alt"></i> Reservations</a></li>
           <li><a href="#" id="modifyInv"><i class="fal fa-warehouse"></i> Invertory</a></li>
