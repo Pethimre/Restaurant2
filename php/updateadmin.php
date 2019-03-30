@@ -20,11 +20,18 @@
 			if ($confirmPassword == md5($currentPasword)) {
 				if($newPassword == $newPassword2)
 				{
-					$newPassword = md5($newPassword2);
-					$updatePasswordQuery = "UPDATE `users` SET `password` = '$newPassword' WHERE `users`.username = 'admin'";
-					$update = $db->query($updatePasswordQuery);
+					if (strlen($newPassword) < 8) {
+						echo "<script>window.location.href='admin.php?error=shortPW'</script>";
+					}
+					else
+					{
+						$newPassword = md5($newPassword2);
+						$updatePasswordQuery = "UPDATE `users` SET `password` = '$newPassword' WHERE `users`.username = 'admin'";
+						$update = $db->query($updatePasswordQuery);
 
-					echo "<script>window.location.href='admin.php?success=done'</script>";
+						echo "<script>window.location.href='admin.php?success=done'</script>";
+					}
+					
 				}
 				else
 				{

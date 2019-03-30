@@ -181,6 +181,10 @@
       echo "<script>oktext = 'Invalid password entered.'; errormsg(oktext);</script>";
       break;
 
+    case 'shortPW':
+      echo "<script>oktext = 'New password must be at least 8 characters long.'; errormsg(oktext);</script>";
+      break;
+
     case 'noMatch':
       echo "<script>oktext = 'The given passwords doesnt match.'; errormsg(oktext);</script>";
       break;
