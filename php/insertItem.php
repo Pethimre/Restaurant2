@@ -13,6 +13,12 @@ $db = db::get();
 		$insert = "INSERT INTO `wrappers` (`id`, `wrappername`, `quantity`, `updated_at`, `last_update_by`) VALUES (NULL, '$wname', '$wrquantity', '$uat', '$luby')";
 		$insertinvitem = $db->query($insert);
 		
-		header("location: admin.php");
+		if ($_SESSION["username"] != "admin") {
+			echo "<script>window.location.href='worker3.php?success=done'</script>";
+		}
+		else
+		{
+			header("location: admin.php?success=done");
+		}
 	}
 ?>

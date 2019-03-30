@@ -177,6 +177,14 @@
       echo "<script>oktext = 'Every gap must be filled.'; errormsg(oktext);</script>";
       break;
 
+    case 'wrongPW':
+      echo "<script>oktext = 'Invalid password entered.'; errormsg(oktext);</script>";
+      break;
+
+    case 'noMatch':
+      echo "<script>oktext = 'The given passwords doesnt match.'; errormsg(oktext);</script>";
+      break;
+
     case 'imageExists':
       echo "<script>oktext = 'Image already exists.'; errormsg(oktext);</script>";
       break;
@@ -254,6 +262,7 @@
                 <ul class="dropdown-menu">
                   <li><a href="#" id="manageWorker"><i class="fal fa-user-cog"></i> Workers</a></li>
                   <li><a href="#" id="manageUsers"><i class="fal fa-users-cog"></i> Users </a></li>
+                  <li><a href="#" id="manageAdmin"><i class="fal fa-cog"></i> Admin Profile </a></li>
                 </ul>
               </li>
             </ul>
@@ -778,6 +787,17 @@ $allUser = $db->getArray($selectUsersByRoleQuery);
 
 </div>
 
+<div id="manageAdminPanel">
+  <form class="form-group" action="updateadmin.php" method="post">
+    <div class="form-row">
+      <input type="password" name="currentPasword" class="form-control" placeholder="Current password">
+      <input type="password" name="newPassword" class="form-control" placeholder="New password">
+      <input type="password" name="newPassword2" class="form-control" placeholder="Confirm new password">
+      <button class="btn btn-success" name="setNewPassword"><i class="fal fa-wrench"></i> Set new password</button>
+    </div>
+  </form>
+</div>
+
 <!-- Invertory Modal -->
 
 <div id="inv-modal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true" style="display: none;">
@@ -1001,6 +1021,7 @@ $allUser = $db->getArray($selectUsersByRoleQuery);
   $("#manageWorkerPanel").hide();
   $("#showrev").hide();
   $("#newITemPanel").hide();
+  $("#manageAdminPanel").hide();
 
   $("#addfbutton").click(function(e) {
     e.preventDefault();
@@ -1037,6 +1058,53 @@ $allUser = $db->getArray($selectUsersByRoleQuery);
     if($("#reviewsPanel").is(":visible")){
       $("#reviewsPanel").hide();
     }
+
+    if($("#manageAdminPanel").is(":visible")){
+      $("#manageAdminPanel").hide();
+    }
+
+  });
+
+  $("#manageAdmin").click(function(e) {
+    e.preventDefault();
+    $("#manageAdminPanel").toggle();
+
+    if($("#contactMenu").is(":visible")){
+      $("#contactMenu").hide();
+    }
+
+    if($("#manageUserPanel").is(":visible")){
+      $("#manageUserPanel").hide();
+    }
+
+    if($("#invertoryPanel").is(":visible")){
+      $("#invertoryPanel").hide();
+    }
+
+    if($("#manageWorkerPanel").is(":visible")){
+      $("#manageWorkerPanel").hide();
+    }
+
+    if($("#modifyOrders").is(":visible")){
+      $("#modifyOrders").hide();
+    }
+
+    if($("#modifyReserve").is(":visible")){
+      $("#modifyReserve").hide();
+    }
+
+    if($("#newWorkerPanel").is(":visible")){
+      $("#newWorkerPanel").hide();
+    }
+
+    if($("#reviewsPanel").is(":visible")){
+      $("#reviewsPanel").hide();
+    }
+
+    if($("#addfeaturedForm").is(":visible")){
+      $("#addfeaturedForm").hide();
+    }
+    
   });
 
   $("#newReview").click(function(e) {
@@ -1075,6 +1143,10 @@ $allUser = $db->getArray($selectUsersByRoleQuery);
       $("#manageUserPanel").hide();
     }
 
+    if($("#manageAdminPanel").is(":visible")){
+      $("#manageAdminPanel").hide();
+    }
+
   });
 
   $("#togglerev").click(function(e) {
@@ -1093,6 +1165,10 @@ $allUser = $db->getArray($selectUsersByRoleQuery);
     if($("#contactMenu").is(":visible")){
       $("#contactMenu").hide();
     }
+
+    if($("#manageAdminPanel").is(":visible")){
+      $("#manageAdminPanel").hide();
+    }    
 
     if($("#manageWorkerPanel").is(":visible")){
       $("#manageWorkerPanel").hide();
@@ -1160,6 +1236,10 @@ $allUser = $db->getArray($selectUsersByRoleQuery);
       $("#manageUserPanel").hide();
     }
 
+    if($("#manageAdminPanel").is(":visible")){
+      $("#manageAdminPanel").hide();
+    }
+
   });
 
   $("#modifyInv").click(function(e) {
@@ -1196,6 +1276,10 @@ $allUser = $db->getArray($selectUsersByRoleQuery);
 
     if($("#manageUserPanel").is(":visible")){
       $("#manageUserPanel").hide();
+    }
+
+    if($("#manageAdminPanel").is(":visible")){
+      $("#manageAdminPanel").hide();
     }
 
   });
@@ -1235,6 +1319,10 @@ $allUser = $db->getArray($selectUsersByRoleQuery);
       $("#manageUserPanel").hide();
     }
 
+    if($("#manageAdminPanel").is(":visible")){
+      $("#manageAdminPanel").hide();
+    }
+
   });
   
   $("#modifyRes").click(function(e) {
@@ -1270,6 +1358,10 @@ $allUser = $db->getArray($selectUsersByRoleQuery);
 
     if($("#manageUserPanel").is(":visible")){
       $("#manageUserPanel").hide();
+    }
+
+    if($("#manageAdminPanel").is(":visible")){
+      $("#manageAdminPanel").hide();
     }
 
   });
@@ -1309,6 +1401,10 @@ $allUser = $db->getArray($selectUsersByRoleQuery);
       $("#manageUserPanel").hide();
     }
 
+    if($("#manageAdminPanel").is(":visible")){
+      $("#manageAdminPanel").hide();
+    }
+
   });
 
     $("#manageUsers").click(function(e) {
@@ -1344,6 +1440,10 @@ $allUser = $db->getArray($selectUsersByRoleQuery);
 
     if($("#modifyOrders").is(":visible")){
       $("#modifyOrders").hide();
+    }
+
+    if($("#manageAdminPanel").is(":visible")){
+      $("#manageAdminPanel").hide();
     }
     
   });

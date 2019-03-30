@@ -17,7 +17,6 @@
 
 		if (empty($name) || empty($email) || empty($subject) || empty($message)) {
 			array_push($errors, "You must fill all the gaps!");
-			//header("location: ../index.php");
 		}
 		else
 		{
