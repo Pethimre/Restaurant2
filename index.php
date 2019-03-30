@@ -578,6 +578,7 @@
                     <div class=" section-content">
                         <div class="row">
                             <div class="col-md-5 col-sm-6">
+                                <?php if($roleid == 2): ?>
                                 <form class="reservation-form" method="post" action="php/reserve.php">
                                     <div class="row">
                                         <div class="col-md-6 col-sm-6">
@@ -635,6 +636,14 @@
                                             
                                     </div>
                                 </form>
+                            <?php endif; ?>
+                            <?php if($roleid != 2): ?>
+                                <form class="reservation-form" method="post" action="php/reserve.php">
+                                    <div class="container">
+                                        Please sign in as a customer to use this feature.
+                                    </div>                                    
+                                </form>
+                            <?php endif; ?>
                             </div>
                             
                             <div class="col-md-2 hidden-sm hidden-xs"></div>

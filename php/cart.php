@@ -156,8 +156,27 @@ session_start();
                     <td></td>
                     <td>Total:</td>
                     <td><?php echo $cancer." HUF"; ?></td>
-                    <td><button class="btn btn-sm btn-success" name="placeOrder"><i class="fal fa-cart-plus"></i> Place Order</button></td>
-                  </form>
+                    <td><button type="button" class="btn btn-success" data-toggle="modal" data-target="#confirmOrder"><i class="fal fa-cart-plus"></i> Place Order</button></td>
+                    <div class="modal" tabindex="-1" role="dialog" id="confirmOrder">
+                      <div class="modal-dialog" role="document">
+                        <div class="modal-content">
+                          <div class="modal-header">
+                            <h5 class="modal-title">Modal title <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                              <i class="fal fa-times-circle"></i>
+                          </button></h5>
+                            
+                      </div>
+                      <div class="modal-body">
+                        <p>Modal body text goes here.</p>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-danger" data-dismiss="modal">Let me think about it..</button>
+                        <button type="submit" name="placeOrder" class="btn btn-success">Sure, place order!</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </form>
                 </tr>
             </tbody>
         </table>
