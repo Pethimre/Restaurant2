@@ -20,8 +20,8 @@
 	<meta charset="utf-8">
 	<link rel="stylesheet" type="text/css" href="css/profile.css">
 	<link rel="stylesheet" type="text/css" href="fontawesome/css/all.css">
-	<link href='https://fonts.googleapis.com/css?family=Titillium+Web:400,300,600' rel='stylesheet' type='text/css'>
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/normalize/5.0.0/normalize.min.css">
+	<link href='css/googlefonts.css' rel='stylesheet' type='text/css'>
+  <link rel="stylesheet" href="css/normalize.min.css">
   <link rel="shortcut icon" href="images/favicon.ico" type="image/x-icon"/>
   <link rel="stylesheet" href="css/signup.css">
   <style>
@@ -215,10 +215,10 @@
       }
 </script>
 
-<script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js" integrity="sha384-ZMP7rVo3mIykV+2+9J3UJ46jBk0WLaUAdn689aCwoqbBJiSnjAK/l8WvCWPIPm49" crossorigin="anonymous"></script>
-<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js" integrity="sha384-ChfqqxuZUCnJSK3+MXmPNIyE6ZbWh2IMqE241rYiqJxyMiZ6OW/JmZQ5stwEULTy" crossorigin="anonymous"></script>
-<script src='http://cdnjs.cloudflare.com/ajax/libs/jquery/2.1.3/jquery.min.js'></script>
+<script src="js/jquery311.js"></script>
+<script src="js/popper.js"></script>
+<script src="js/bootstrap4.min.js"></script>
+<script src='js/jquery211.js'></script>
 <script  src="js/signup.js"></script>
 
 </body>

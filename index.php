@@ -88,7 +88,7 @@
             background: #666;
         }
         input[type="datetime-local"] {
-            background:#fff url(https://cdn1.iconfinder.com/data/icons/cc_mono_icon_set/blacks/16x16/calendar_2.png)  95% 50% no-repeat ;
+            background:#fff url("images/calendar_2.png")  95% 50% no-repeat ;
         }
         input[type="datetime-local"]::-webkit-inner-spin-button {
           display: none;
@@ -578,7 +578,7 @@
                     <div class=" section-content">
                         <div class="row">
                             <div class="col-md-5 col-sm-6">
-                                <?php if($roleid == 2): ?>
+                                <?php if($roleid == 2 || !(isset($_SESSION["username"]))): ?>
                                 <form class="reservation-form" method="post" action="php/reserve.php">
                                     <div class="row">
                                         <div class="col-md-6 col-sm-6">
@@ -637,10 +637,10 @@
                                     </div>
                                 </form>
                             <?php endif; ?>
-                            <?php if($roleid != 2): ?>
+                            <?php if($roleid != 2 && isset($_SESSION["username"])): ?>
                                 <form class="reservation-form" method="post" action="php/reserve.php">
                                     <div class="container">
-                                        Please sign in as a customer to use this feature.
+                                        Please log in as a customer to use this feature.
                                     </div>                                    
                                 </form>
                             <?php endif; ?>

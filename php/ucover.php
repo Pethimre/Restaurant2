@@ -17,7 +17,7 @@ if (isset($_POST["UploadCover"])) {
   $uploadOk = 1;
   $imgname = "";
   $imageFileType = strtolower(pathinfo($target_file,PATHINFO_EXTENSION));
-var_dump($cover); var_dump($userid);
+
   if (!empty(basename($_FILES["fileToUpload2"]["name"]))) 
   {
     $imgname = basename($_FILES["fileToUpload2"]["name"]);
