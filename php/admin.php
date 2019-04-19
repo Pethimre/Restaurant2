@@ -277,7 +277,7 @@
     </div><!-- /.row -->
   </nav>
 
-  <div class="info container" style="margin-top: 5%;background-color: rgba(239,239,239, .7);">
+  <div class="info container" style="margin-top: 5%;background-color: gray;">
    <div class="jumbotron text-center" style="background-color: rgba(255,255,255,.5);">
     <h2>Admin Page</h2>
     <small>Welcome back!</small>
