@@ -1,6 +1,6 @@
 <?php
 session_start();
-error_reporting(E_ALL & ~E_NOTICE); //Hide php notifications on the page
+#error_reporting(E_ALL & ~E_NOTICE); //Hide php notifications on the page
 
 $username = "";
 $email    = "";
@@ -19,14 +19,14 @@ if (isset($_POST['reg_user'])) {
   $password_1 = mysqli_real_escape_string($db, $_POST['password1']);
   $password_2 = mysqli_real_escape_string($db, $_POST['password2']);
 
-  if (empty($username)) { array_push($errors, "Username is required"); }
-  if (empty($phoneNumber)) { array_push($errors, "Phone Number is required"); }
-  if (empty($fullname)) { array_push($errors, "Full Name is required"); }
-  if (empty($billingAddr)) { array_push($errors, "Billing Addresss is required"); }
-  if (empty($shppingAddr)) { array_push($errors, "Shipping Addresss is required"); }
-  if (empty($email)) { array_push($errors, "Email is required"); }
-  if (empty($password_1)) { array_push($errors, "Password is required"); }
-  if ($password_1 != $password_2) { array_push($errors, "The two passwords do not match"); }
+  if (empty($username)) {echo "<script>window.location.href='register.php?result=noUser'</script>";}
+  if (empty($phoneNumber)) {echo "<script>window.location.href='register.php?result=noPN'</script>";}
+  if (empty($fullname)) {echo "<script>window.location.href='register.php?result=noFN'</script>";}
+  if (empty($billingAddr)) {echo "<script>window.location.href='register.php?result=noBA'</script>";}
+  if (empty($shppingAddr)) {echo "<script>window.location.href='register.php?result=noSA'</script>";}
+  if (empty($email)) {echo "<script>window.location.href='register.php?result=noEmail'</script>";}
+  if (empty($password_1)) {echo "<script>window.location.href='register.php?result=noPW'</script>";}
+  if ($password_1 != $password_2) {echo "<script>window.location.href='register.php?result=noMatch'</script>";}
 
   $user_check_query = "SELECT * FROM users WHERE username='$username' OR email='$email' LIMIT 1";
   $result = mysqli_query($db, $user_check_query);
@@ -34,22 +34,28 @@ if (isset($_POST['reg_user'])) {
   
   if ($user) { // if user exists
     if ($user['username'] === $username) {
-      array_push($errors, "Username already exists");
+      echo "<script>window.location.href='register.php?result=alUser'</script>";
     }
 
     if ($user['email'] === $email) {
-      array_push($errors, "email already exists");
+      echo "<script>window.location.href='register.php?result=alEmail'</script>";
     }
   }
 
   if (filter_var($email, FILTER_VALIDATE_EMAIL)) {
-    #echo("$email is a valid email address");
   } else {
-    array_push($errors, "This is not a valid email address");
+    echo "<script>window.location.href='register.php?result=invEmail'</script>";
   }
 
   if (count($errors) == 0) {
-    if (strlen($password) >= 8) {
+    $uppercase = preg_match('@[A-Z]@', $password_1);
+    $lowercase = preg_match('@[a-z]@', $password_1);
+    $number    = preg_match('@[0-9]@', $password_1);
+    if (!$uppercase || !$lowercase || !$number || strlen($password_1) < 8) {
+      echo "<script>window.location.href='register.php?result=weakPW'</script>";
+    }
+    else
+    {
       $password = md5($password_1);
 
       $query = "INSERT INTO `users` (`id`, `username`, `email`, `password`, `Fullname`, `PhoneNo`, `profilepic`, `role_id`) VALUES (NULL, '$username', '$email', '$password', '$fullname', '$phoneNumber', NULL, '2')";
@@ -57,13 +63,8 @@ if (isset($_POST['reg_user'])) {
       mysqli_query($db, $query);
       mysqli_query($db, $addressQuery);
       $_SESSION['username'] = $username;
-      $_SESSION['success'] = "You are now logged in";
       mkdir('images/profiles/'.$username, 0777, true);
       header('location: index.php');
-    }
-    else
-    {
-      array_push($errors, "Password needs to be at least 8 characters long.");
     }
   	
   }
@@ -74,10 +75,10 @@ if (isset($_POST['login_user'])) {
   $password = mysqli_real_escape_string($db, $_POST['password']);
 
   if (empty($username)) {
-    array_push($errors, "Username is required");
+    echo "<script>window.location.href='register.php?result=noUser'</script>";
   }
   if (empty($password)) {
-    array_push($errors, "Password is required");
+    echo "<script>window.location.href='register.php?result=noPW'</script>";
   }
 
   if (count($errors) == 0) {
@@ -88,7 +89,7 @@ if (isset($_POST['login_user'])) {
       $_SESSION['username'] = $username;
       header('location: index.php');
     }else {
-      array_push($errors, "Wrong username/password combination");
+      echo "<script>window.location.href='register.php?result=wrongPW'</script>";
     }
   }
 }

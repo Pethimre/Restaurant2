@@ -2,6 +2,7 @@
 	include('reg.php');
 
 	error_reporting(E_ALL ^ E_NOTICE); //Hide all notice
+  include_once "reg.php";
 
 	if (isset($_SESSION["username"])) {
 		# code...
@@ -10,6 +11,10 @@
 				<a class='btn btn-secondary' href='php/logout.php'>Log me out then</a>
 			  </div>";
 	}
+  if (isset($_GET["result"])) {
+    $conn = mysqli_connect("localhost", "root","","restaurant");
+    $result = mysqli_real_escape_string($conn,$_GET["result"]);
+  }
 ?>
 <!DOCTYPE html>
 <html>
@@ -24,6 +29,8 @@
   <link rel="stylesheet" href="css/normalize.min.css">
   <link rel="shortcut icon" href="images/favicon.ico" type="image/x-icon"/>
   <link rel="stylesheet" href="css/signup.css">
+  <link rel="stylesheet" href="css/sweetalert2.min.css">
+  <script type="text/javascript" src="js/sweetalert2.all.min.js"></script>
   <style>
     .bg 
 {
@@ -34,10 +41,89 @@
       background-size: cover;
 }
   </style>
+    <script>
+    function errormsg(errortext)
+    {
+      Swal.fire({
+        type: 'error',
+        title: 'Oops...',
+        text: errortext + "!",
+        footer: "If you need help, contact us <a href='../index.php' style='color:black;text-decoration:none;'> <i class='fas fa-arrow-right'></i></a>."
+      })
+    }
+
+    function okmsg(oktext)
+    {
+      Swal.fire(
+        'Ok!',
+        oktext + '!',
+        'success'
+        )
+    }
+
+  </script>
 </head>
 <body class="bg">
+<?php 
+  switch ($result) {
+    case 'noMatch':
+      echo "<script>errormsg('Your passwords doesnt match')</script>";
+      break;
 
-<div class="form" style="margin-top: 3%; border-radius: 15px;">
+      case 'wrongPW':
+      echo "<script>errormsg('Wrong username/password combination')</script>";
+      break;
+
+      case 'noPW':
+      echo "<script>errormsg('Password is required')</script>";
+      break;
+
+      case 'noUser':
+      echo "<script>errormsg('Username is required')</script>";
+      break;
+
+      case 'weakPW':
+      echo "<script>errormsg('Password does not meet the requirements. Must contain at least 1 big and smal letter, 1 number and it must be longer than 8 characters.')</script>";
+      break;
+
+      case 'invEmail':
+      echo "<script>errormsg('This is not a valid email address')</script>";
+      break;
+    
+      case 'alEmail':
+      echo "<script>errormsg('Email already exists')</script>";
+      break;
+
+      case 'alUser':
+      echo "<script>errormsg('Username already exists')</script>";
+      break;
+
+      case 'noEmail':
+      echo "<script>errormsg('Password is required')</script>";
+      break;
+
+      case 'noSA':
+      echo "<script>errormsg('Shipping Addresss is required')</script>";
+      break;
+
+      case 'noBA':
+      echo "<script>errormsg('Billing Addresss is required')</script>";
+      break;
+
+      case 'noFN':
+      echo "<script>errormsg('Full Name is required')</script>";
+      break;
+
+      case 'noPN':
+      echo "<script>errormsg('Phone Number is required')</script>";
+      break;
+
+    default:
+      # code...
+      break;
+  }
+ ?>
+<div class="form" style="margin-top: 3%; border-radius: 15px; background-color: gray;">
       
       <ul class="tab-group">
         <li class="tab active"><a href="#signup">Sign Up</a></li>
@@ -56,7 +142,7 @@
         <div id="signup">   
           <h1>Sign Up for Free</h1>
           
-          <form action="register.php" method="post">
+          <form action="reg.php" method="post">
           
           <div class="top-row">
             <div class="field-wrap">
