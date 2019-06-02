@@ -9,7 +9,6 @@
   header("Pragma: no-cache");
 
   require_once "upload.php";
-  require_once "editres.php";
   require_once "newreview.php";
   require_once "addworker.php";
   require_once "editinvertory.php";
@@ -457,7 +456,7 @@
 </div>
 
 <?php 
-$selectReservations = "SELECT * FROM reservations";
+$selectReservations = "SELECT reservations.*, users.username AS resby FROM reservations LEFT JOIN users ON users.id = reservations.user_id";
 $allreservations = $db->getArray($selectReservations);
 ?>
 
@@ -476,7 +475,6 @@ $allreservations = $db->getArray($selectReservations);
           </thead>
           <tbody>
             <?php
-              #$selectOrderedItemsQuery = "SELECT cart.food_id, cart.quantity, cart.subtotal, foods.name FROM cart LEFT JOIN foods ON cart.food_id = foods.id WHERE cart.id =".$list[$i];  
               $selectOrderedItemsQuery = "SELECT orders.id, progress, total, ordered_at, users.username FROM `orders` LEFT JOIN users ON orders.user_id = users.id";
               $getOrderedElement = $db->getArray($selectOrderedItemsQuery);
               ?>
@@ -518,11 +516,121 @@ $allreservations = $db->getArray($selectReservations);
             <td><?php echo $reservations["bookedat"]; ?></td>
             <td><?php echo $reservations["progress"]; ?></td>
             <td><?php echo $reservations["forWho"]; ?></td>
-            <td><button data-toggle="modal" data-target="#res-modal" data-id="<?php echo $reservations["id"]; ?>" id="getEmployee" onclick="reload()" class="btn btn-sm btn-success"><i class="fas fa-edit"></i>Edit</button></td>
+            <td><button data-toggle="modal" data-target="#res-modal<?php echo $reservations['id']; ?>" class="btn btn-sm btn-success"><i class="fas fa-edit"></i>Edit</button></td>
           </tr>
+
+          <script>
+            function validateModal(id,expire,pepoleno,message,progress)
+            {
+              
+              if(forwho != "" || reservedate != "" || pepoleno != "" || expire != "" || message != "" || progress != "")
+              {
+                $.ajax({
+                  url:'editres.php',
+                  method:'POST',
+                  data:{id:id,pepoleno:pepoleno,expire:expire,message:message,progress:progress},
+                  success:function(data){
+                    alert(data);
+                  }
+                });
+              }
+
+              else
+              {
+                alert("All gaps must be filled for update.");
+              }
+            }
+        </script>
         <?php endforeach; ?>
       </tbody>
     </table>
+
+    <?php foreach($allreservations as $reservations): ?>
+      <div id="res-modal<?php echo $reservations['id']; ?>" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true" style="display: none;">
+        <form method="post">
+             <div class="modal-dialog"> 
+              <div class="modal-content">                  
+               <div class="modal-header"> 
+                 <button type="button" class="close" data-dismiss="modal" aria-hidden="true"><i class="far fa-times-circle"></i></button> 
+                 <h4 class="modal-title">
+                   Reservation Details
+                 </h4> 
+               </div>          
+               <div class="modal-body">                   
+                 <div id="employee-detail">                                        
+                   <div class="row"> 
+                     <div class="col-md-12">                         
+                       <div class="table-responsive">                   
+                           <table class="table table-striped table-bordered">
+                             <tr>
+                               <th>Reservation ID</th>
+                               <td id="resid"><?php echo $reservations["id"]; ?></td>
+                             </tr> 
+                             <tr>
+                               <th>Reserved By:</th>
+                               <td id=""><?php echo $reservations["resby"]; ?></td>
+                             </tr>                                     
+                             <tr>
+                               <th>For Who</th>
+                               <td><input type="text" value="<?php echo $reservations["forWho"]; ?>" id="forwho<?php echo $reservations["id"]; ?>"></td>
+                             </tr>                                         
+                             <tr>
+                               <th>Booked At:</th>
+                               <td><?php echo $reservations["bookedat"]; ?></td>
+                             </tr>   
+                             <tr>
+                               <th>Reserved To: <div><?php echo $reservations["reserve_date"]; ?></div></th>
+                               <td>
+                                <input type="datetime-local" value="" name="newReservedate<?php echo $reservations["id"]; ?>">
+                              </td>
+                            </tr>  
+                            <tr>
+                             <th>Reservation Expires: <div><?php echo $reservations["reserve_date_end"]; ?></div></th>
+                             <td>
+                              <input type="datetime-local" value="" name="newExpire<?php echo $reservations["id"]; ?>">
+                            </td>
+                          </tr>                                 
+                          <tr>
+                           <th>People Number</th>
+                           <td><input type="number" name="pepoleNo<?php echo $reservations["id"]; ?>" value="<?php echo $reservations["pepoleNo"]; ?>"></td>
+                         </tr> 
+                         <tr>
+                           <th>Message:</th>
+                           <td><textarea name="message<?php echo $reservations["id"]; ?>" rows="3"><?php echo $reservations["message"]; ?></textarea></td>
+                         </tr>                                             
+                         <tr>
+                           <th>Progress</th>
+                           <td><input type="text" value="<?php echo $reservations["progress"]; ?>" name="progress<?php echo $reservations["id"]; ?>"></td>
+                         </tr> 
+                       </table>
+                   </div>                                       
+                 </div> 
+               </div>                       
+             </div>                              
+           </div>           
+           <div class="modal-footer"> 
+            <button type="button" class="btn btn-danger" data-dismiss="modal">Close</button> 
+            <button name="update<?php echo $reservations['id']; ?>" class="btn btn-success">Update</button>
+              </form>
+              <?php  
+              $tmp = "update".$reservations['id'];
+                if (isset($_POST[$tmp])) {
+                  $id = $reservations["id"];
+                  $expire = $db->escape($_POST["newExpire".$reservations['id']]);
+                  $progress = $db->escape($_POST["progress".$reservations['id']]);
+                  $message = $db->escape($_POST["message".$reservations['id']]);
+                  $pepoleNo = $db->escape($_POST["pepoleNo".$reservations['id']]);
+
+                  $update = "UPDATE `reservations` SET `reserve_date_end` = '$expire', `pepoleNo` = '$pepoleNo', `message` = '$message', `progress` = '$progress' WHERE `reservations`.`id` = ".$id;
+                  $exe = $db->query($update);
+                  echo "<script>window.location.href='admin.php?success=done'</script>";
+                }
+               ?>
+          </div>              
+        </div> 
+      </div>
+  </div>
+    <?php endforeach; ?>
 
   <?php endif; ?>
 
@@ -849,83 +957,6 @@ $allUser = $db->getArray($selectUsersByRoleQuery);
       <button id="insert" class="btn btn-success" name="updateINvItem" onclick="return invModal()">Update</button>
     </div>              
   </div> 
-</div>
-</form>
-</div>
-
-
-<!-- Modal 2 -->
-
-<div id="res-modal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true" style="display: none;">
-  <form action="admin.php" method="POST">
-   <div class="modal-dialog"> 
-    <div class="modal-content">                  
-     <div class="modal-header"> 
-       <button type="button" class="close" data-dismiss="modal" aria-hidden="true"><i class="far fa-times-circle"></i></button> 
-       <h4 class="modal-title">
-         Reservation Details
-       </h4> 
-     </div>          
-     <div class="modal-body">                   
-       <div id="employee-detail">                                        
-         <div class="row"> 
-           <div class="col-md-12">                         
-             <div class="table-responsive">        
-               <form action="" method="POST" id="insert_form">                     
-                 <table class="table table-striped table-bordered">
-                   <tr>
-                     <th>Reservation ID</th>
-                     <td id="resid"></td>
-                   </tr> 
-                   <tr>
-                     <th>Reserved By:</th>
-                     <td id=""><iframe src="iframe/userid.php" frameborder="0" id="reservedby" height="25px" scrolling="no"></iframe></td>
-                   </tr>                                     
-                   <tr>
-                     <th>For Who</th>
-                     <td><input type="text" value="" id="forwho" name="forwho"></td>
-                   </tr>                                         
-                   <tr>
-                     <th>Booked At:</th>
-                     <td id=""><input type="date" value="" id="bookedat" name="bookedat" readonly="true"></td>
-                   </tr>   
-                   <tr>
-                     <th>Reserved To: <div id="reservedate"></div></th>
-                     <td>
-                      <input type="datetime-local" value="" id="newReservedate" name="newReservedate">
-                    </td>
-                  </tr>  
-                  <tr>
-                   <th>Reservation Expires: <div id="expire"></div></th>
-                   <td>
-                    <input type="datetime-local" value="" id="newExpire" name="newExpire">
-                  </td>
-                </tr>                                 
-                <tr>
-                 <th>People Number</th>
-                 <td id=""><input type="number" id="pepoleNo" value="" name="pepoleNo"></td>
-               </tr> 
-               <tr>
-                 <th>Message:</th>
-                 <td id=""><textarea name="message" id="message" rows="3"></textarea></td>
-               </tr>                                             
-               <tr>
-                 <th>Progress</th>
-                 <td id=""><input type="text" value="" id="progress" name="progress"></td>
-               </tr> 
-
-             </table>
-           </form>                                
-         </div>                                       
-       </div> 
-     </div>                       
-   </div>                              
- </div>           
- <div class="modal-footer"> 
-  <button type="button" class="btn btn-danger" data-dismiss="modal">Close</button> 
-  <button id="insert" class="btn btn-success" onclick="return validateModal()">Update</button>
-</div>              
-</div> 
 </div>
 </form>
 </div>
@@ -1453,41 +1484,6 @@ $allUser = $db->getArray($selectUsersByRoleQuery);
   });
 
   $(document).ready(function(){   
-   $(document).on('click', '#getEmployee', function(e){  
-     e.preventDefault();  
-     var empid = $(this).data('id');    
-     $('#employee-detail').hide();  
-     $.ajax({
-      url: 'review.php',
-      type: 'POST',
-      data: 'empid='+empid,
-      dataType: 'json',
-      cache: false
-    })
-     .done(function(data){
-      $('#employee-detail').hide();
-      $('#employee-detail').show();
-      $('#resid').html(data.id);
-      $('#forwho').val(data.forWho);
-      $('#progress').val(data.progress);
-      $('#bookedat').val(data.bookedat);      
-      $('#reservedate').html(data.reserve_date);      
-      $('#expire').html(data.reserve_date_end);      
-      $('#pepoleNo').val(data.pepoleNo);      
-      $('#message').val(data.message);
-      
-      document.cookie = "userid="+data.user_id;
-      document.cookie = "id="+data.id;
-      document.getElementById('reservedby').contentWindow.location.reload();
-
-    })
-     .fail(function(){
-      $('#employee-detail').html('Error, Please try again...');
-    });
-   }); 
- });
-
-  $(document).ready(function(){   
    $(document).on('click', '#getWorker', function(e){  
      e.preventDefault();  
      var workid = $(this).data('id');    
@@ -1548,12 +1544,6 @@ $allUser = $db->getArray($selectUsersByRoleQuery);
     $("#newITemPanel").toggle();
 
   });
-
-  function redirect()
-  {
-    window.location.href = "editres.php"
-  }
-
   function redirectWorker()
   {
     window.location.href = "editworker.php";
@@ -1562,33 +1552,6 @@ $allUser = $db->getArray($selectUsersByRoleQuery);
   function redirectInv()
   {
     window.location.href = "editinvertory.php";
-  }
-
-  function validateModal()
-  {
-    var forwho = $('#forwho').val();
-    var reservedate = $('#newReservedate').val();
-    var expire = $('#newExpire').val();
-    var pepoleno = $('#pepoleNo').val();
-    var message = $('#message').val();
-    var progress = $('#progress').val();
-
-    if(forwho != "" || reservedate != "" || pepoleno != "" || expire != "" || message != "" || progress != "")
-    {
-      //alert("All gaps must be filled!");
-      document.cookie = "forwho=" + forwho;
-      document.cookie = "reservedate=" + reservedate;
-      document.cookie = "expire=" + expire;
-      document.cookie = "pepoleno=" + pepoleno;
-      document.cookie = "message=" + message;
-      document.cookie = "progress=" + progress;
-      redirect();
-    }
-
-    else
-    {
-      alert("All gaps must be filled for update.");
-    }
   }
 
   function invModal()

@@ -54,7 +54,7 @@
           if (!empty($email) && !empty($phone) && !empty($passwordEntered)) {
             if (filter_var($email, FILTER_VALIDATE_EMAIL)) {
               $userUpdateQuery = "UPDATE `users` SET `email` = '$email', `Fullname` = '$fullname', `PhoneNo` = '$phone' WHERE `users`.`username` = '".$_SESSION["username"]."'";
-              $addressUpdateQuery = "UPDATE `addresses` SET `shipping_address` = '$shippingaddr', `billing_address` = '$billingaddr' WHERE `addresses`.`username` = '$username'";
+              $addressUpdateQuery = "UPDATE `addresses` SET `shipping_address` = '$shippingaddr', `billing_address` = '$billingaddr' WHERE `addresses`.`username` = '".$_SESSION["username"]."'";
             $updateUser = $db->query($userUpdateQuery);
             $updateAddr = $db->query($addressUpdateQuery);
             echo "<script>window.location.href='profile.php?success=".$inCaseOfOk."';</script>";
